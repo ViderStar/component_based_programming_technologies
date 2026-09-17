@@ -30,10 +30,10 @@ class Student:
 class GuiFormState:
     """Serializable snapshot of a tiny visual form (button + text field)."""
 
-    title: str = "Визуальная форма"
-    button_label: str = "Нажми меня"
+    title: str = "Visual form"
+    button_label: str = "Click me"
     text_value: str = ""
-    label_text: str = "Добро пожаловать"
+    label_text: str = "Welcome"
     extra: dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, object]:
@@ -48,8 +48,8 @@ class GuiFormState:
     @classmethod
     def from_dict(cls, data: dict) -> GuiFormState:
         return cls(
-            title=str(data.get("title", "Визуальная форма")),
-            button_label=str(data.get("button_label", "Нажми меня")),
+            title=str(data.get("title", "Visual form")),
+            button_label=str(data.get("button_label", "Click me")),
             text_value=str(data.get("text_value", "")),
             label_text=str(data.get("label_text", "")),
             extra=dict(data.get("extra") or {}),

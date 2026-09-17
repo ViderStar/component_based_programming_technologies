@@ -1,12 +1,12 @@
-# ЛР №4: Рефлексия
+# Lab 4: Reflection
 
-## Введение
+## Idea
 
-Рефлексия — способность программы смотреть на свою структуру во время выполнения: какие есть поля и методы, как их вызвать по имени, как добавить новый метод, не переписывая класс заранее. В Java это `Class.forName`, `getDeclaredFields`, `Method.invoke`. В Python — `getattr`, `setattr`, `dir`, `inspect`, `type()`.
+Reflection lets a program look at its own structure at runtime: fields, methods, call-by-name, add a method without editing the class source. In Java: `Class.forName`, `getDeclaredFields`, `Method.invoke`. In Python: `getattr`, `setattr`, `dir`, `inspect`, `type()`.
 
-## Динамический класс
+## Dynamic class
 
-Задание: создать `Student` с полями `name`, `group` и методом `greet()` **динамически**.
+Build `Student` with `name`, `group`, and `greet()` **at runtime**:
 
 ```python
 Student = type("Student", (object,), {
@@ -15,51 +15,51 @@ Student = type("Student", (object,), {
 })
 ```
 
-`type(name, bases, dict)` — тот же механизм, которым Python создаёт обычные `class` блоки. Рефлексия работает и с такими классами: `inspect.signature(student.greet)` возвращает `()`.
+`type(name, bases, dict)` is how Python builds ordinary `class` blocks. `inspect.signature(student.greet)` still returns `()`.
 
-## Интроспекция
+## Introspection
 
-| Функция | Назначение |
+| Call | Role |
 | --- | --- |
-| `getattr(obj, "greet")` | достать атрибут по строке |
-| `setattr` | записать атрибут или метод |
-| `hasattr` | проверить наличие |
-| `dir` | список имён |
-| `inspect.signature` | сигнатура |
-| `inspect.getmembers` | пары имя/значение |
+| `getattr(obj, "greet")` | attribute by string |
+| `setattr` | write attribute or method |
+| `hasattr` | existence check |
+| `dir` | name list |
+| `inspect.signature` | signature |
+| `inspect.getmembers` | name/value pairs |
 
-GUI показывает дерево членов. Вызов идёт через `getattr(student, method_name)(*args)`.
+The GUI shows a member tree. Calls go through `getattr(student, method_name)(*args)`.
 
-## Методы в runtime
+## Runtime methods
 
-- на **экземпляр**: `types.MethodType(func, obj)` — bound method только у этого объекта;
-- на **класс**: `setattr(Student, "shout", lambda self: ...)` — появится у всех экземпляров.
+- on an **instance**: `types.MethodType(func, obj)`
+- on the **class**: `setattr(Student, "shout", lambda self: ...)`
 
-Так демонстрируется пункт «add new method in run-time and running it».
+That is “add a new method at run-time and run it”.
 
 ## Java → Python
 
-В методичке: «Show Java-Python interaction by sending method from Java program to python script».
+The handout: send a method from a Java program to a Python script.
 
-Протокол: одна JSON-строка `{"method": "greet", "args": []}` по TCP. Python-мост делает `getattr(student, method)(*args)` и отвечает `{"ok": true, "result": "..."}`. Java-клиент `MethodSender.java` — обычный `Socket`, без библиотек. Это тот же приём, что XML-RPC в ЛР2, только имя метода приходит от другой JVM.
+Protocol: one JSON line `{"method": "greet", "args": []}` over TCP. The Python bridge does `getattr(student, method)(*args)` and replies `{"ok": true, "result": "..."}`. `MethodSender.java` is a plain `Socket`. Same idea as Lab 2 XML-RPC, different language on the other side.
 
-## Аннотации и тесты
+## Annotations / tests
 
-Старая методичка на Java предлагала записать в аннотации ожидаемый выход и прогнать несколько методов. В Python это декоратор:
+The older Java lab stored expected output in an annotation. Here:
 
 ```python
 @expected(1, "Hie, Dear")
 def get_str(self, index: int) -> str: ...
 ```
 
-Рефлексия находит методы с атрибутом `_expected`, вызывает их и сравнивает результат. Два метода — как требовалось («более одного метода»).
+Reflection finds `_expected`, calls the method, compares. Two methods, as required.
 
-## Создание объекта без конструктора
+## `__new__` without `__init__`
 
-В лекции показаны `__new__` + ручной `__init__`. Это полезно понимать: фабрики, pickle и ORM так обходят обычный конструктор. В стенде основной путь — `type()` + обычный `__init__`.
+The lecture shows `__new__` plus a manual `__init__`. Serializers and ORMs do this. The stand uses `type()` plus a normal constructor.
 
-## Связь с другими работами
+## Links
 
-- pickle (ЛР1) восстанавливает класс по имени — это рефлексия импорта;
-- XML-RPC (ЛР2) выбирает метод по строке `methodName`;
-- GUI (ЛР3) биндит обработчики по id инструментов — родственная идея «вызвать по имени».
+- pickle (Lab 1) restores a class by name;
+- XML-RPC (Lab 2) picks a method by `methodName`;
+- GUI (Lab 3) binds handlers by tool id — call-by-name again.

@@ -13,18 +13,18 @@ from lab4.runner import run_lab4
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Лабораторные работы: технологии компонентного программирования."
+        description="Component-based programming labs."
     )
-    parser.add_argument("--gui", action="store_true", help="Открыть wxPython-launcher.")
+    parser.add_argument("--gui", action="store_true", help="Open the wxPython launcher.")
     parser.add_argument(
         "--lab",
         choices=("1", "2", "3", "4"),
-        help="Номер лабораторной для CLI-прогона.",
+        help="Lab number for the CLI run.",
     )
     parser.add_argument(
         "--all",
         action="store_true",
-        help="Прогнать CLI-демо всех четырёх лабораторных.",
+        help="Run CLI demos for all four labs.",
     )
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(message)s")

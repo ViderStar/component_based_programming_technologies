@@ -1,10 +1,10 @@
-"""Shared wxPython look: BSUIR blue header, cards, log boxes."""
+"""Shared wxPython look: compact header, cards, log."""
 
 from __future__ import annotations
 
 import wx
 
-from configs.cfg import COURSE, STUDENT_NAME, STUDENT_ROLE, TEACHER_NAME, YEAR
+from configs.cfg import STUDENT_NAME, YEAR
 from helpers.images import load_icon
 
 BSUIR_BLUE = wx.Colour(0, 85, 165)
@@ -26,43 +26,29 @@ def apply_window_icon(window: wx.TopLevelWindow) -> None:
 
 
 def styled_button(parent: wx.Window, label: str, primary: bool = True) -> wx.Button:
-    button = wx.Button(parent, label=label, size=(-1, 36))
+    button = wx.Button(parent, label=label, size=(-1, 32))
     if primary:
         button.SetBackgroundColour(BSUIR_BLUE)
         button.SetForegroundColour(wx.WHITE)
     return button
 
 
-def make_header(
-    parent: wx.Window,
-    title: str,
-    subtitle: str | None = None,
-) -> wx.Panel:
-    panel = wx.Panel(parent, size=(-1, 92))
+def make_header(parent: wx.Window, title: str, subtitle: str | None = None) -> wx.Panel:
+    panel = wx.Panel(parent, size=(-1, 58))
     panel.SetBackgroundColour(HEADER_BG)
     sizer = wx.BoxSizer(wx.VERTICAL)
     title_label = wx.StaticText(panel, label=title)
-    title_font = wx.Font(16, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-    title_label.SetFont(title_font)
+    title_label.SetFont(wx.Font(14, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
     title_label.SetForegroundColour(HEADER_FG)
-    sizer.Add(title_label, 0, wx.LEFT | wx.RIGHT | wx.TOP, 14)
-
-    if subtitle is None:
-        subtitle = f"{COURSE}  ·  {STUDENT_NAME}, {STUDENT_ROLE}  ·  {TEACHER_NAME}  ·  {YEAR}"
-    sub_label = wx.StaticText(panel, label=subtitle)
+    sizer.Add(title_label, 0, wx.LEFT | wx.RIGHT | wx.TOP, 10)
+    sub_label = wx.StaticText(panel, label=subtitle or f"{STUDENT_NAME}  ·  {YEAR}")
     sub_label.SetForegroundColour(wx.Colour(176, 196, 222))
-    sizer.Add(sub_label, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 14)
+    sizer.Add(sub_label, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 8)
     panel.SetSizer(sizer)
     return panel
 
 
-def make_card(parent: wx.Window) -> wx.Panel:
-    card = wx.Panel(parent)
-    card.SetBackgroundColour(CARD_BG)
-    return card
-
-
-def make_log(parent: wx.Window, height: int = 180) -> wx.TextCtrl:
+def make_log(parent: wx.Window, height: int = 90) -> wx.TextCtrl:
     log = wx.TextCtrl(
         parent,
         style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_DONTWRAP | wx.BORDER_SIMPLE,

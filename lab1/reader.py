@@ -33,9 +33,9 @@ def main() -> None:
     parser.add_argument("path", type=Path)
     args = parser.parse_args()
     student = load_student(args.path)
-    photo = "нет"
+    photo = "none"
     if student.photo is not None:
-        photo = f"{student.photo.filename} ({student.photo.mime}, {len(student.photo.data)} байт)"
+        photo = f"{student.photo.filename} ({student.photo.mime}, {len(student.photo.data)} bytes)"
     print(f"name     : {student.name}")
     print(f"group    : {student.group}")
     print(f"faculty  : {student.faculty}")

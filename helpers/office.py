@@ -37,8 +37,8 @@ def _mac_open_app(app_names: list[str], document: Path | None = None) -> str:
         return name
     if document is not None:
         open_path(document)
-        return "системное приложение"
-    raise FileNotFoundError(f"Не найдены приложения: {', '.join(app_names)}")
+        return "system default"
+    raise FileNotFoundError(f"Apps not found: {', '.join(app_names)}")
 
 
 def open_word(document: Path | None = None) -> str:
@@ -47,7 +47,7 @@ def open_word(document: Path | None = None) -> str:
     if sys.platform == "win32":
         if document:
             os.startfile(document)  # type: ignore[attr-defined]
-            return "ассоциированное приложение Windows"
+            return "Windows file association"
         subprocess.Popen(["cmd", "/c", "start", "winword"])
         return "Microsoft Word"
     binary = shutil.which("libreoffice") or shutil.which("soffice")
@@ -60,7 +60,7 @@ def open_word(document: Path | None = None) -> str:
     if document:
         open_path(document)
         return "xdg-open"
-    raise FileNotFoundError("Текстовый процессор не найден")
+    raise FileNotFoundError("No word processor found")
 
 
 def open_excel(document: Path | None = None) -> str:
@@ -69,7 +69,7 @@ def open_excel(document: Path | None = None) -> str:
     if sys.platform == "win32":
         if document:
             os.startfile(document)  # type: ignore[attr-defined]
-            return "ассоциированное приложение Windows"
+            return "Windows file association"
         subprocess.Popen(["cmd", "/c", "start", "excel"])
         return "Microsoft Excel"
     binary = shutil.which("libreoffice") or shutil.which("soffice")
@@ -82,7 +82,7 @@ def open_excel(document: Path | None = None) -> str:
     if document:
         open_path(document)
         return "xdg-open"
-    raise FileNotFoundError("Табличный процессор не найден")
+    raise FileNotFoundError("No spreadsheet app found")
 
 
 def open_calendar() -> str:
@@ -91,7 +91,7 @@ def open_calendar() -> str:
         return "Calendar"
     if sys.platform == "win32":
         subprocess.Popen(["cmd", "/c", "start", "outlookcal:"], shell=False)
-        return "Календарь Windows"
+        return "Windows Calendar"
     subprocess.Popen(["gnome-calendar"])
     return "gnome-calendar"
 

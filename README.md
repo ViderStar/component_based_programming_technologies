@@ -1,88 +1,80 @@
-# Технологии компонентного программирования
+# Component-Based Programming Technologies
 
-## О дисциплине
+## Course
 
-Курс кафедры ИТАС БГУИР посвящён компонентному подходу: как упаковать объект, передать его по сети, вызвать чужой модуль, собрать GUI из готовых виджетов и заглянуть внутрь класса во время выполнения.
+BSUIR course on components: serialize an object, send it over the network, call a remote module, assemble a GUI, inspect a class at runtime.
 
-Преподаватель: **Герман Олег Витольдович**, кандидат технических наук, доцент кафедры информационных технологий автоматизированных систем.
+Supervisor: **Oleg German**, PhD, Associate Professor, ITAS.
 
-Студент: **Лебедевич Артём Владимирович**, магистрант 2 курса, 2026.
+Student: **Artsem Lebiadzevich**, year-2 MSc, FCSN, POIT, PI, 2026.
 
-### Основные темы
+### Topics
 
-| Раздел | Что изучается |
+| Area | What is covered |
 | --- | --- |
-| **Сериализация** | pickle, JSON, сокеты, WebP как байты и base64 |
-| **Удалённый вызов** | XML-RPC, сравнение с REST и CGI |
-| **Визуальные компоненты** | wxPython: тулбар, WebView, календарь, Office, PDF |
-| **Рефлексия** | `type()`, `inspect`, методы в runtime, Java→Python |
+| **Serialization** | pickle, JSON, sockets, WebP as bytes and base64 |
+| **Remote calls** | XML-RPC vs REST and CGI |
+| **GUI components** | wxPython: toolbar, WebView, calendar, Office, PDF |
+| **Reflection** | `type()`, `inspect`, runtime methods, Java→Python |
 
-### Цели курса
+### Goals
 
-1. Сериализовать пользовательский объект и картинку, восстановить их в другом процессе и по сети.
-2. Вызвать функцию на удалённом процессе так, будто она локальная.
-3. Собрать десктопное приложение из стандартных и собственных wx-компонентов.
-4. Исследовать и менять структуру класса во время выполнения.
-
----
-
-## Теория лабораторных работ
-
-### [ЛР №1: Сериализация и десериализация](labs_info/lab1_theory.md)
-
-**Тема**: pickle / JSON, файлы, TCP, визуальная форма, WebP и base64.
-
-**Ключевые понятия**: поток байтов, `dump`/`load`, length-prefix, data URL.
-
-**Применение**: сохранение состояния, обмен объектами между процессами, передача вложений.
+1. Serialize a custom object and an image, restore them in another process and over TCP.
+2. Call a function that lives in another process as if it were local.
+3. Build a desktop app from stock and custom wx widgets.
+4. Inspect and change a class at runtime.
 
 ---
 
-### [ЛР №2: Удалённый вызов модулей](labs_info/lab2_theory.md)
+## Lab theory
 
-**Тема**: XML-RPC сервер и клиент, в том числе Java без сторонних библиотек.
+### [Lab 1: Serialization and deserialization](labs_info/lab1_theory.md)
 
-**Ключевые понятия**: RPC, SOAP/XML, REST, MQTT, CGI (только теория).
+**Focus**: pickle / JSON, files, TCP, GUI snapshot, WebP and base64.
 
-**Применение**: распределённые учебные сервисы, тонкий клиент.
-
----
-
-### [ЛР №3: Компоненты wxPython](labs_info/lab3_theory.md)
-
-**Тема**: тулбар с иконками и подсказками, браузер, медиа, календарь, PDF, Word/Excel.
-
-**Ключевые понятия**: виджет, sizer, событие, кастомный компонент, ActiveX/COM как исторический аналог.
-
-**Применение**: десктопные оболочки, встраивание внешних приложений.
+**Keywords**: byte stream, `dump`/`load`, length-prefix, data URL.
 
 ---
 
-### [ЛР №4: Рефлексия](labs_info/lab4_theory.md)
+### [Lab 2: Remote module invocation](labs_info/lab2_theory.md)
 
-**Тема**: динамический класс `Student`, `getattr`/`inspect`, методы в runtime, мост Java→Python.
+**Focus**: XML-RPC server and client, including a Java client with no extra libraries.
 
-**Ключевые понятия**: интроспекция, `type()`, `types.MethodType`, аннотации ожидаемого результата.
-
-**Применение**: отладка, плагины, тестовые фреймворки.
+**Keywords**: RPC, SOAP/XML, REST, MQTT, CGI (theory only).
 
 ---
 
-## Связь между лабораторными
+### [Lab 3: wxPython components](labs_info/lab3_theory.md)
+
+**Focus**: toolbar with icons and tooltips, browser, media, calendar, PDF, Word/Excel.
+
+**Keywords**: widget, sizer, event, custom component.
+
+---
+
+### [Lab 4: Reflection](labs_info/lab4_theory.md)
+
+**Focus**: dynamic `Student`, `getattr`/`inspect`, runtime methods, Java→Python bridge.
+
+**Keywords**: introspection, `type()`, `types.MethodType`, expected-output annotations.
+
+---
+
+## How the labs connect
 
 ```
-ЛР1: объект ↔ байты ↔ сеть
-  └──► ЛР2: байты становятся вызовом метода (RPC)
-         └──► ЛР4: имя метода берётся строкой и ищется через рефлексию
+Lab 1: object ↔ bytes ↔ network
+  └──► Lab 2: bytes become a method call (RPC)
+         └──► Lab 4: method name is a string, resolved via reflection
 
-ЛР3: GUI-компоненты, в которые встраиваются ЛР1–ЛР4
+Lab 3: GUI components used by Labs 1–4
 ```
 
 ---
 
-## Запуск
+## Run
 
-Нужен Python 3.12 (wxPython пока нет колёс под 3.14). В репозитории уже описан `.venv`:
+Python 3.12 is required (no wxPython wheels for 3.14 yet):
 
 ```bash
 uv venv --python 3.12 .venv
@@ -92,22 +84,24 @@ python scripts/make_assets.py
 python main.py
 ```
 
-| Команда | Что делает |
+| Command | Effect |
 | --- | --- |
-| `python main.py` | GUI-launcher всех лабораторных |
-| `python main.py --lab 1` | CLI-прогон сериализации и сети |
-| `python main.py --lab 1 --gui` | только окно ЛР1 |
+| `python main.py` | GUI launcher |
+| `python main.py --lab 1` | CLI serialization + network |
+| `python main.py --lab 1 --gui` | Lab 1 window only |
 | `python main.py --lab 2` | XML-RPC add/mul/inspect |
-| `python main.py --lab 3` | окно тулбара wxPython |
-| `python main.py --lab 4` | рефлексия + мост |
-| `python main.py --all` | все CLI-демо |
-| `python -m lab1.reader artifacts/student.json` | «другое приложение» для ЛР1 |
-| `python -m unittest tests.test_labs -v` | автотесты |
+| `python main.py --lab 3` | wxPython toolbar window |
+| `python main.py --lab 4` | reflection + bridge |
+| `python main.py --all` | all CLI demos |
+| `python -m lab1.reader artifacts/student.json` | “other app” for Lab 1 |
+| `python -m unittest tests.test_labs -v` | tests |
 
-Исходные методички и лекции лежат в [`docs/`](docs/). Отчёты к защите — в [`reports/`](reports/).
+Each lab window has a **Cases** list: **Run** or **All** covers the assignment.
 
-## Передача картинки (ЛР1)
+Handouts: [`docs/`](docs/). Reports: [`reports/`](reports/).
 
-- **pickle**: поле `Student.photo.data` — сырые байты WebP.
-- **JSON**: `photo.data` — base64, плюс `mime` и `filename`. Допустимы data URL вида `data:image/webp;base64,...`.
-- **Сеть**: 4 байта длины (big-endian) + 8 байт имени формата + полезная нагрузка. Так кадр не режется на `recv(1024)`, как в методичке.
+## Sending an image (Lab 1)
+
+- **pickle**: `Student.photo.data` is raw WebP bytes.
+- **JSON**: `photo.data` is base64 plus `mime` and `filename`. Data URLs `data:image/webp;base64,...` are accepted.
+- **Network**: 4-byte big-endian length + 8-byte format name + payload. Avoids the handout’s `recv(1024)` truncation.

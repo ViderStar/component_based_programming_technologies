@@ -1,55 +1,53 @@
-# ЛР №3: Компоненты wxPython
+# Lab 3: wxPython components
 
-## Введение
+## Idea
 
-Компонентное GUI — это сборка окна из готовых деталей: кнопка, тулбар, браузер, календарь. wxPython — обёртка над wxWidgets; на macOS, Windows и Linux виджеты выглядят нативно. Методичка предлагает тулбар с иконками, подсказки, загрузку картинки и музыки, браузер, Word/Excel, календарь/часы и PDF.
+A component GUI is assembled from stock parts: button, toolbar, browser, calendar. wxPython wraps wxWidgets (native look on macOS, Windows, Linux). The handout asks for a toolbar with icons, tooltips, image and music loading, a browser, Word/Excel, calendar/clock, and PDF.
 
-## Возможности набора
+## Toolkit
 
-- окна и диалоги, в том числе `wx.FileDialog`
-- кнопки, поля, списки, деревья, notebook
-- меню и **toolbar**
-- графика и изображения
-- события: `EVT_BUTTON`, `EVT_TOOL`
-- свои компоненты через **наследование** (`CustomButton(wx.Button)`)
+- windows and dialogs, including `wx.FileDialog`
+- buttons, fields, lists, trees, notebook
+- menus and **toolbar**
+- images
+- events: `EVT_BUTTON`, `EVT_TOOL`
+- custom widgets via **subclassing** (`CustomButton(wx.Button)`)
 
-## Тулбар и hints
-
-Каждый инструмент создаётся так:
+## Toolbar hints
 
 ```python
-toolbar.AddTool(id, "Изображение", bitmap, "Загрузить и показать изображение")
+toolbar.AddTool(id, "Image", bitmap, "Load and show an image")
 ```
 
-Четвёртый аргумент — short help: подсказка при наведении. Это обязательный пункт задания.
+The fourth argument is the hover tooltip — required by the assignment.
 
-Иконки лежат в `assets/icons/` (PNG 128×128, на тулбаре масштабируются до 32×32).
+Icons live in `assets/icons/` (PNG 128×128, shown at 32×32).
 
-## Кастомный компонент
+## Custom widget
 
-`lab3.widgets.CustomButton` задаёт цвета БГУИР и tooltip. Так в методичке сделан пример с красной кнопкой: поведение меняется в подклассе, а не копипастой `wx.Button` по всему коду.
+`lab3.widgets.CustomButton` sets BSUIR colours and a tooltip, matching the red-button example in the handout.
 
-## Встроенный браузер
+## Browser
 
-`wx.html2.WebView` открывает `https://www.google.com`. Это современная замена ActiveX `InternetExplorer.Application` из методички (IE на macOS нет). Если WebView недоступен, URL открывается системным браузером.
+`wx.html2.WebView` opens `https://www.google.com`. That replaces ActiveX `InternetExplorer.Application` (no IE on macOS). If WebView is missing, the system browser is used.
 
-## Медиа, Office, PDF
+## Media, Office, PDF
 
-| Пункт задания | Реализация |
+| Task | Implementation |
 | --- | --- |
-| Картинка | `FileDialog` + Pillow → `wx.StaticBitmap` (WebP тоже) |
-| Музыка | `pygame.mixer`, запасной вариант `afplay` на macOS |
+| Image | file dialog + Pillow → `wx.StaticBitmap` (WebP too) |
+| Music | `pygame.mixer`, fallback `afplay` on macOS |
 | Word | `open -a "Microsoft Word"` → Pages → TextEdit |
 | Excel | Microsoft Excel → Numbers |
-| Календарь и часы | `wx.adv.CalendarCtrl` + таймер `HH:MM:SS`, плюс системный Calendar.app |
-| PDF | `pypdf` извлекает текст, `open` запускает Preview |
+| Calendar / clock | `wx.adv.CalendarCtrl` + timer, plus Calendar.app |
+| PDF | `pypdf` extracts text, `open` launches Preview |
 
-На Windows используются ассоциации файлов (`os.startfile`) и `winword`/`excel`. Исторические примеры `win32com` и Windows Scripting Host в отчёте упоминаются, в runtime на macOS не вызываются.
+On Windows: `os.startfile` and `winword`/`excel`. `win32com` examples stay in the report, not in macOS runtime.
 
-## Компоновка
+## Layout
 
-Виджеты кладутся в `wx.BoxSizer` / `wx.FlexGridSizer`, а не по абсолютным координатам. Так окно переживает изменение размера — это и есть «компонентная» сборка, а не холст с кнопками.
+Widgets go into `wx.BoxSizer` / `wx.FlexGridSizer`, not absolute coordinates.
 
-## Связь с другими работами
+## Links
 
-Launcher курса и окна ЛР1/ЛР2/ЛР4 собраны тем же wxPython. ЛР3 — «честный» стенд по методичке, остальные лабы переиспользуют тему, хедер и лог.
+The course launcher and Labs 1, 2, 4 reuse the same wx theme. Lab 3 is the full multimedia stand from the handout.

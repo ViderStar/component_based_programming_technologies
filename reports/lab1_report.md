@@ -1,69 +1,68 @@
-# Отчёт по лабораторной работе №1
+# Lab 1 report
 
-**Учреждение образования**  
-«Белорусский государственный университет информатики и радиоэлектроники»
+**Institution**  
+Belarusian State University of Informatics and Radioelectronics
 
-Факультет информационных технологий и управления  
-Кафедра информационных технологий автоматизированных систем
+Faculty of Computer Systems and Networks (FCSN), POIT, group PI
 
-**Отчёт по лабораторной работе №1**  
-по дисциплине «Технологии компонентного программирования»
+**Lab 1 report**  
+Course: Component-Based Programming Technologies
 
-**Тема:** сериализация и десериализация объектов (pickle, JSON, сеть, WebP/base64)
+**Topic:** object serialization and deserialization (pickle, JSON, network, WebP/base64)
 
 | | |
 | --- | --- |
-| Выполнил | магистрант 2 курса Лебедевич Артём Владимирович |
-| Проверил | к.т.н., доцент Герман Олег Витольдович |
-| Минск | 2026 |
+| Author | Artsem Lebiadzevich, year-2 MSc, FCSN, POIT, PI |
+| Supervisor | Oleg German, PhD, Associate Professor |
+| Minsk | 2026 |
 
 ---
 
-## 1. Цель
+## 1. Goal
 
-Изучить сериализацию и десериализацию объектов Python, запись в файл, передачу по TCP и восстановление визуальной формы. Дополнительно — передать изображение WebP как сырые байты (pickle) и как base64 (JSON).
+Serialize and deserialize Python objects: files, TCP, a visual form snapshot. Extra: ship a WebP image as raw bytes (pickle) and as base64 (JSON).
 
-## 2. Ход работы
+## 2. Work done
 
-1. Класс `Student` с полями имя, группа, факультет и необязательным `Photo`.
-2. Объект создаётся в GUI/CLI, фото берётся из `assets/samples/avatar.webp`.
-3. Сериализация в `artifacts/student.pkl` и `artifacts/student.json`.
-4. Десериализация «другим приложением»: `python -m lab1.reader`.
-5. TCP-сервер и клиент с length-prefix (4 байта длины), не `recv(1024)`.
-6. Снимок визуальной формы (кнопка + текстовое поле) через `GuiFormState.to_dict`.
-7. Пункты 1–6 выполнены отдельно для pickle и JSON.
+1. `Student` with name, group, faculty, optional `Photo`.
+2. Object built in GUI/CLI; photo from `assets/samples/avatar.webp`.
+3. Written to `artifacts/student.pkl` and `artifacts/student.json`.
+4. Read by another process: `python -m lab1.reader`.
+5. TCP server/client with a 4-byte length prefix (not `recv(1024)`).
+6. GUI form snapshot via `GuiFormState.to_dict`.
+7. Steps 1–6 for pickle and JSON separately.
 
-Код: [`lab1/`](../lab1/). Теория: [`labs_info/lab1_theory.md`](../labs_info/lab1_theory.md).
+Code: [`lab1/`](../lab1/). Theory: [`labs_info/lab1_theory.md`](../labs_info/lab1_theory.md).
 
-## 3. Передача картинки
+## 3. Image transfer
 
-- pickle кладёт в объект поле `data: bytes`;
-- JSON кладёт `encoding: "base64"` и ASCII-строку;
-- Pillow рисует превью, потому что wx может не открыть WebP;
-- на приёме байты пишутся в `artifacts/` и снова показываются.
+- pickle stores `data: bytes`;
+- JSON stores `encoding: "base64"`;
+- Pillow draws the preview (wx may not open WebP);
+- on receive, bytes are written to `artifacts/` and shown again.
 
-![Превью WebP](screenshots/lab1_webp.png)
+![WebP preview](screenshots/lab1_webp.png)
 
-![Окно ЛР1](screenshots/lab1.png)
+![Lab 1 window](screenshots/lab1.png)
 
-## 4. Результаты
+## 4. Results
 
-CLI-прогон (`python main.py --lab 1`) сохраняет оба файла, читает их reader-ом и гоняет эхо по localhost:8003. Автотест `test_length_prefix_large_payload` проверяет кадр 5000 байт, `test_json_base64_roundtrip` — совпадение байтов WebP после JSON.
+`python main.py --lab 1` writes both files, reads them with the reader, and echoes on localhost:8003. Tests cover a 5000-byte frame and WebP bytes after JSON.
 
-## 5. Выводы
+## 5. Conclusions
 
-Сериализация нужна, чтобы объект пережил процесс и сеть. pickle удобен внутри Python, JSON — на границе систем. Картинки в JSON живут только как base64. Длину кадра нельзя угадывать: её надо передавать явно.
+Serialization lets an object survive a process boundary and a socket. pickle is convenient inside Python; JSON is the boundary format. Images in JSON need base64. Frame length must be explicit.
 
-## 6. Ответы на контрольные вопросы
+## 6. Control questions
 
-1. **Что такое сериализация/десериализация?**  
-   Превращение объекта в поток байтов и восстановление объекта из этого потока.
+1. **What is serialization/deserialization?**  
+   Object → byte stream and back.
 
-2. **Какие платформы используются для сериализации?**  
-   В работе — pickle и JSON. В лекции ещё marshal; в других языках — Java Serializable, .NET BinaryFormatter/System.Text.Json, protobuf.
+2. **Which platforms are used?**  
+   pickle and JSON here. The lecture also mentions marshal; other stacks use Java Serializable, System.Text.Json, protobuf.
 
-3. **В чём польза сериализации?**  
-   Сохранение состояния, обмен между процессами и машинами, кэш, буфер сообщений.
+3. **Why serialize?**  
+   Persist state, talk between processes/machines, cache, message buffers.
 
-4. **Можно ли сериализовать объект, у которого есть методы?**  
-   Да. pickle запоминает класс и данные экземпляра; методы берутся из класса при загрузке. JSON сохраняет только данные, методы снова появляются, когда мы строим `Student` вручную.
+4. **Can you serialize an object that has methods?**  
+   Yes. pickle stores the class and instance data; methods come back from the class. JSON stores data only; methods appear when we rebuild `Student`.

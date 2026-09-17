@@ -1,13 +1,13 @@
-# Методические материалы
+# Course materials
 
-Исходные файлы курса (без правок):
+Original files (unchanged):
 
-| Файл | Назначение |
+| File | Role |
 | --- | --- |
-| `Lab_SerializDeserializБел.docx` | Лабораторная: сериализация / десериализация |
-| `Lec_3_SerDeserNetworkBel.docx` | Лекция: pickle, JSON, сокеты, GUI-снимок |
-| `Лекц_УдаленныйВызовМодулей.docx` | Лекция: RPC, XML-RPC, CGI, REST |
-| `LABORATORY_wxComponent.docx` | Лабораторная: wxPython |
-| `LEC_wxComponent.docx` | Лекция: компоненты wx |
-| `Laboratory_4_ReflectionFF.docx` | Лабораторная: рефлексия на Python |
-| `Рефлексия (лабораторная работа).doc` | Старый вариант на Java (аннотации, тесты методов) |
+| `Lab_SerializDeserializБел.docx` | Lab: serialization / deserialization |
+| `Lec_3_SerDeserNetworkBel.docx` | Lecture: pickle, JSON, sockets, GUI snapshot |
+| `Лекц_УдаленныйВызовМодулей.docx` | Lecture: RPC, XML-RPC, CGI, REST |
+| `LABORATORY_wxComponent.docx` | Lab: wxPython |
+| `LEC_wxComponent.docx` | Lecture: wx components |
+| `Laboratory_4_ReflectionFF.docx` | Lab: Python reflection |
+| `Рефлексия (лабораторная работа).doc` | Older Java variant (annotations, method tests) |

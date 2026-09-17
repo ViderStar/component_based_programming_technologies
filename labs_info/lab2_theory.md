@@ -1,24 +1,24 @@
-# ЛР №2: Удалённый вызов модулей
+# Lab 2: Remote module invocation
 
-## Введение
+## Idea
 
-Удалённый вызов модуля — это ситуация, когда клиент просит выполнить функцию, которой нет в его процессе. Сервер загружает модуль, вызывает функцию с переданными аргументами и возвращает результат. Для клиента вызов выглядит почти как локальный: `proxy.add(2, 3)`.
+The client asks another process to run a function it does not have locally. The server loads the module, calls the function, and returns the result. From the client it looks local: `proxy.add(2, 3)`.
 
-## Модели
+## Models
 
-| Протокол | Идея | Транспорт |
+| Protocol | Idea | Transport |
 | --- | --- | --- |
-| **RPC / XML-RPC** | метод + параметры в конверте | HTTP |
-| **SOAP** | XML + WSDL, тяжёлые стандарты | HTTP |
-| **REST** | ресурсы и глаголы HTTP | HTTP |
-| **MQTT** | публикация в тему | брокер |
-| **Java RMI / Pyro** | «живые» объекты по сети | свой протокол |
+| **RPC / XML-RPC** | method + params in an envelope | HTTP |
+| **SOAP** | XML + WSDL | HTTP |
+| **REST** | resources and HTTP verbs | HTTP |
+| **MQTT** | publish to a topic | broker |
+| **Java RMI / Pyro** | live objects over the wire | custom |
 
-В лабораторной реализован **XML-RPC** из стандартной библиотеки: `xmlrpc.server.SimpleXMLRPCServer` и `xmlrpc.client.ServerProxy`. Это прямой пример из лекции (без Jython: клиент на CPython и отдельный Java-класс, который шлёт тот же XML).
+This lab uses **XML-RPC** from the stdlib: `xmlrpc.server.SimpleXMLRPCServer` and `xmlrpc.client.ServerProxy` (Python client plus a Java class that posts the same XML; no Jython).
 
-## Как устроен XML-RPC
+## XML-RPC
 
-Клиент отправляет HTTP POST с телом:
+The client POSTs:
 
 ```xml
 <methodCall>
@@ -30,28 +30,28 @@
 </methodCall>
 ```
 
-Сервер отвечает `<methodResponse>` с результатом. Python прячет XML за `ServerProxy`: `proxy.add(2, 3) == 5`.
+The server answers with `<methodResponse>`. Python hides XML behind `ServerProxy`.
 
-Зарегистрированные методы стенда:
+Registered methods:
 
-- `add(x, y)`, `mul(x, y)` — как `pow`/`adder` в лекции
-- `greet_student(name, group)` — прикладной метод «своего» модуля
-- `inspect_module()` — список сигнатур, связь с рефлексией
-- `system.listMethods` — встроенная интроспекция XML-RPC
+- `add(x, y)`, `mul(x, y)`
+- `greet_student(name, group)`
+- `inspect_module()` — signatures (link to Lab 4)
+- `system.listMethods`
 
-## CGI — только теория
+## CGI — theory only
 
-Лекция разбирает HTML-форму и `cgi.FieldStorage`. Модуль `cgi` **удалён в Python 3.13+**, а `CGIHTTPRequestHandler` считается legacy. Для курса достаточно понимать: браузер шлёт поля формы веб-серверу, скрипт читает их и печатает `Content-type: text/html`. В коде лабораторной CGI нет.
+The lecture uses HTML forms and `cgi.FieldStorage`. `cgi` is gone in Python 3.13+. Not implemented here.
 
-## Java-клиент
+## Java client
 
-`lab2/java/XmlRpcClient.java` собирает `methodCall` строкой и делает `HttpURLConnection` POST. Сторонних JAR не нужно. Это замена связки «Python-сервер + Jython-клиент» из лекции.
+`lab2/java/XmlRpcClient.java` builds a `methodCall` string and POSTs it with `HttpURLConnection`. No JARs.
 
-## Обработка ошибок
+## Errors
 
-Сеть может не открыться, метод — не существовать, типы — не совпасть. XML-RPC вернёт fault; GUI показывает текст исключения. Сервер крутится в daemon-потоке и корректно `shutdown()`.
+Missing server, unknown method, type mismatch → XML-RPC fault. The GUI shows the exception. The server runs in a daemon thread and shuts down cleanly.
 
-## Связь с другими работами
+## Links
 
-- **ЛР1** даёт транспорт объектов; XML-RPC сам сериализует аргументы в XML.
-- **ЛР4** вызывает метод **по строковому имени** — то же, что `getattr(proxy, method_name)`.
+- **Lab 1** ships whole objects; XML-RPC serializes arguments as XML.
+- **Lab 4** calls a method **by string name** — same idea as `getattr(proxy, method_name)`.

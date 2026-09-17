@@ -1,56 +1,54 @@
-# Отчёт по лабораторной работе №3
+# Lab 3 report
 
-**Учреждение образования**  
-«Белорусский государственный университет информатики и радиоэлектроники»
+**Institution**  
+Belarusian State University of Informatics and Radioelectronics
 
-Факультет информационных технологий и управления  
-Кафедра информационных технологий автоматизированных систем
+Faculty of Computer Systems and Networks (FCSN), POIT, group PI
 
-**Отчёт по лабораторной работе №3**  
-по дисциплине «Технологии компонентного программирования»
+**Lab 3 report**  
+Course: Component-Based Programming Technologies
 
-**Тема:** компоненты wxPython (тулбар, медиа, браузер, Office, календарь, PDF)
+**Topic:** wxPython components (toolbar, media, browser, Office, calendar, PDF)
 
 | | |
 | --- | --- |
-| Выполнил | магистрант 2 курса Лебедевич Артём Владимирович |
-| Проверил | к.т.н., доцент Герман Олег Витольдович |
-| Минск | 2026 |
+| Author | Artsem Lebiadzevich, year-2 MSc, FCSN, POIT, PI |
+| Supervisor | Oleg German, PhD, Associate Professor |
+| Minsk | 2026 |
 
 ---
 
-## 1. Цель
+## 1. Goal
 
-Собрать десктопное приложение из стандартных и собственного wx-компонентов. Каждый пункт тулбара обязан иметь иконку и подсказку.
+Assemble a desktop app from stock and custom wx widgets. Every toolbar item has an icon and a tooltip.
 
-## 2. Ход работы
+## 2. Work done
 
-Приложение [`lab3/app.py`](../lab3/app.py):
+App: [`lab3/app.py`](../lab3/app.py).
 
-| Инструмент | Действие |
+| Tool | Action |
 | --- | --- |
-| Изображение | file dialog, превью через Pillow |
-| Музыка | pygame, запасной `afplay` |
-| Браузер | `wx.html2.WebView` → Google |
-| Word | Microsoft Word / Pages / TextEdit + `sample.rtf` |
-| Excel | Microsoft Excel / Numbers + `sample.csv` |
-| Календарь | `wx.adv.CalendarCtrl`, живые часы, Calendar.app |
-| PDF | текст через `pypdf`, открытие Preview |
+| Image | file dialog, Pillow preview |
+| Music | pygame, fallback `afplay` |
+| Browser | `wx.html2.WebView` → Google |
+| Calendar | `wx.adv.CalendarCtrl`, live clock, Calendar.app |
+| PDF | text via `pypdf`, open Preview |
+| Word / Excel | Microsoft apps, else Pages/Numbers/TextEdit |
 
-`CustomButton` — подкласс `wx.Button` с цветами БГУИР, как в примере методички.
+`CustomButton` subclasses `wx.Button` with BSUIR colours.
 
-На macOS нет ActiveX и Internet Explorer. Вместо `win32com.client.Dispatch("InternetExplorer.Application")` используется WebView; вместо WScript.Shell — `open -a`.
+No ActiveX / IE on macOS. WebView replaces `InternetExplorer.Application`; `open -a` replaces WScript.Shell.
 
-![Окно ЛР3](screenshots/lab3.png)
+![Lab 3 window](screenshots/lab3.png)
 
-## 3. Результаты
+## 3. Results
 
-`python main.py --lab 3` открывает окно. CLI `run_lab3()` проверяет наличие иконок и извлекает текст из `assets/samples/sample.pdf`.
+`python main.py --lab 3` opens the window. CLI `run_lab3()` checks icons and extracts `assets/samples/sample.pdf`.
 
-## 4. Выводы
+## 4. Conclusions
 
-Компонентный GUI — это композиция готовых виджетов и тонких подклассов, а не одна простыня координат. Кроссплатформенность wxPython реальная, но внешние приложения (Word, Excel) всё равно зависят от того, что установлено на машине: это нужно явно писать в отчёте.
+A component GUI is composition of widgets and thin subclasses, not a canvas of coordinates. wxPython is cross-platform; Word/Excel still depend on what is installed — say so in the report.
 
-## 5. Fallback на macOS
+## 5. macOS fallback
 
-Если Microsoft Office не установлен, Word открывается в Pages или TextEdit, Excel — в Numbers. Это соответствует заданию «Activate Word / (or) Excel», не ломая защиту на Macintosh.
+Without Microsoft Office, Word opens in Pages or TextEdit, Excel in Numbers. That still matches “Activate Word / (or) Excel”.

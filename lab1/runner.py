@@ -32,10 +32,10 @@ def build_demo_student() -> Student:
 def run_lab1() -> Student:
     ensure_artifacts_dir()
     student = build_demo_student()
-    logger.info("Объект Student: %s", student.greet())
+    logger.info("Student: %s", student.greet())
     if student.photo:
         logger.info(
-            "Фото: %s, %s, %s байт",
+            "Photo: %s, %s, %s bytes",
             student.photo.filename,
             student.photo.mime,
             len(student.photo.data),
@@ -45,12 +45,12 @@ def run_lab1() -> Student:
     json_path = ARTIFACTS_DIR / "student.json"
     pkl_path.write_bytes(dumps_pickle(student))
     json_path.write_bytes(dumps_json(student))
-    logger.info("pickle файл: %s (%s байт)", pkl_path.name, pkl_path.stat().st_size)
-    logger.info("JSON файл:   %s (%s байт)", json_path.name, json_path.stat().st_size)
+    logger.info("pickle file: %s (%s bytes)", pkl_path.name, pkl_path.stat().st_size)
+    logger.info("JSON file:   %s (%s bytes)", json_path.name, json_path.stat().st_size)
 
     via_pickle = load_student(pkl_path)
     via_json = loads_json_student(json_path.read_bytes())
-    logger.info("Другое приложение (reader) pickle: %s", via_pickle.greet())
+    logger.info("Other process (reader) pickle: %s", via_pickle.greet())
     logger.info("JSON roundtrip: %s, photo=%s", via_json.greet(), via_json.photo)
 
     form = GuiFormState(text_value=student.name, label_text="demo")
@@ -65,16 +65,16 @@ def run_lab1() -> Student:
     try:
         server.start()
         echoed = send_student(student, fmt="json")
-        logger.info("Сеть JSON echo: %s", echoed.greet())
+        logger.info("Network JSON echo: %s", echoed.greet())
         echoed_p = send_student(student, fmt="pickle")
-        logger.info("Сеть pickle echo: %s", echoed_p.greet())
+        logger.info("Network pickle echo: %s", echoed_p.greet())
         if echoed.photo:
-            logger.info("По сети ушла картинка %s байт (порт %s)", len(echoed.photo.data), LAB1_PORT)
+            logger.info("Photo sent over the wire: %s bytes (port %s)", len(echoed.photo.data), LAB1_PORT)
     finally:
         server.stop()
 
     _ = loads_pickle(pkl_path.read_bytes())
-    logger.info("ЛР1 завершена")
+    logger.info("Lab 1 done")
     return student
 
 

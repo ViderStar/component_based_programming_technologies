@@ -110,5 +110,21 @@ class Lab4ReflectionTests(unittest.TestCase):
             bridge.stop()
 
 
+class LabCasesTests(unittest.TestCase):
+    def test_lab1_file_cases(self) -> None:
+        from lab1.cases import json_base64, pickle_file
+        from lab1.runner import build_demo_student
+
+        student = build_demo_student()
+        self.assertIn("photo", pickle_file(student))
+        self.assertIn("base64", json_base64(student))
+
+    def test_lab4_case_greet(self) -> None:
+        from lab4.cases import annotated, dynamic_greet
+
+        self.assertIn("Hello, from", dynamic_greet())
+        self.assertTrue(annotated().endswith("PASS") or "PASS" in annotated())
+
+
 if __name__ == "__main__":
     unittest.main()

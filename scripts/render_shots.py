@@ -53,7 +53,7 @@ def draw_mock(path: Path, title: str, lines: list[str], extra: str | None = None
     draw = ImageDraw.Draw(image)
     draw.rectangle((0, 0, 980, 92), fill=(12, 36, 68))
     draw.text((24, 18), title, fill=(245, 248, 252), font=_font(22))
-    draw.text((24, 56), "БГУИР · ИТАС · Лебедевич А.В. · Герман О.В. · 2026", fill=(176, 196, 222), font=_font(14))
+    draw.text((24, 56), "Artsem Lebiadzevich  ·  2026", fill=(176, 196, 222), font=_font(14))
     y = 120
     for line in lines:
         draw.rounded_rectangle((24, y, 956, y + 64), radius=8, fill=(255, 255, 255))
@@ -77,29 +77,29 @@ def main() -> None:
     from lab4.gui import Lab4Frame
 
     jobs = [
-        (LauncherFrame, "launcher.png", "Технологии компонентного программирования", [
-            "ЛР1  Сериализация и десериализация — pickle, JSON, WebP/base64, TCP",
-            "ЛР2  Удалённый вызов модулей — XML-RPC, Java HTTP POST",
-            "ЛР3  Компоненты wxPython — тулбар, браузер, календарь, PDF, Office",
-            "ЛР4  Рефлексия — type(), inspect, MethodType, Java→Python",
+        (LauncherFrame, "launcher.png", "Component-Based Programming Technologies", [
+            "Lab 1  Serialization — pickle, JSON, WebP/base64, TCP",
+            "Lab 2  Remote calls — XML-RPC, Java HTTP POST",
+            "Lab 3  wxPython — toolbar, browser, calendar, PDF, Office",
+            "Lab 4  Reflection — type(), inspect, MethodType, Java→Python",
         ], None),
-        (Lab1Frame, "lab1.png", "ЛР1  Сериализация объектов и картинок", [
-            "Student: имя, группа, факультет + photo (WebP)",
-            "Форматы: pickle (байты) и JSON (base64)",
-            "Сеть: length-prefix вместо recv(1024)",
+        (Lab1Frame, "lab1.png", "Lab 1  Serialize objects and images", [
+            "Student: name, group, faculty + photo (WebP)",
+            "Formats: pickle (bytes) and JSON (base64)",
+            "Network: length-prefix instead of recv(1024)",
         ], "saved student.json  ·  echo photo 18432 bytes"),
-        (Lab2Frame, "lab2.png", "ЛР2  XML-RPC: вызов модуля по имени", [
-            "Методы: add, mul, greet_student, inspect_module",
-            "Клиенты: Python xmlrpc.client и Java XmlRpcClient",
+        (Lab2Frame, "lab2.png", "Lab 2  XML-RPC: call a module by name", [
+            "Methods: add, mul, greet_student, inspect_module",
+            "Clients: Python xmlrpc.client and Java XmlRpcClient",
         ], "add(5, 3) -> 8"),
-        (Lab3Frame, "lab3.png", "ЛР3  Тулбар, браузер, календарь, PDF, Office", [
-            "Иконки с tooltip, CustomButton, WebView Google",
-            "Музыка pygame/afplay, PDF через pypdf, Word/Excel fallback на macOS",
+        (Lab3Frame, "lab3.png", "Lab 3  Toolbar, browser, calendar, PDF, Office", [
+            "Icons with tooltips, CustomButton, WebView Google",
+            "Music via pygame/afplay, PDF via pypdf, Word/Excel fallback on macOS",
         ], "toolbar ready"),
-        (Lab4Frame, "lab4.png", "ЛР4  type(), inspect, runtime methods, Java→Python", [
-            "Динамический Student.greet()",
-            "Добавление introduce() через types.MethodType",
-            "Мост TCP JSON {method, args}",
+        (Lab4Frame, "lab4.png", "Lab 4  type(), inspect, runtime methods, Java→Python", [
+            "Dynamic Student.greet()",
+            "Add introduce() via types.MethodType",
+            "TCP JSON bridge {method, args}",
         ], "PASS get_str(1) -> 'Hie, Dear'"),
     ]
 

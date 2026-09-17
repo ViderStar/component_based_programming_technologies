@@ -1,76 +1,68 @@
-# ЛР №1: Сериализация и десериализация объектов
+# Lab 1: Object serialization and deserialization
 
-## Введение
+## Idea
 
-Сериализация — превращение живого объекта Python в поток байтов, который можно записать в файл или отправить по сети. Десериализация — обратный путь: байты снова становятся объектом с полями и методами.
+Serialization turns a live Python object into a byte stream (file or socket). Deserialization rebuilds the object. The handout labels this LAB №3; in this repo it is Lab 1.
 
-В методичке работа помечена как LAB №3; в этом репозитории она идёт первой, как договорились на курсе.
+## pickle
 
-## Основные понятия
+Standard library. Handles most Python objects, including user classes. Open files in binary mode (`wb` / `rb`). On load the class must be importable: pickle stores `module.Class`, not the source.
 
-### pickle
+- `dump` / `dumps` — object → bytes
+- `load` / `loads` — bytes → object
 
-Модуль стандартной библиотеки. Умеет почти любые объекты Python, включая пользовательские классы. Файл открывается в двоичном режиме (`wb` / `rb`). Класс должен быть импортируем при загрузке: pickle запоминает `module.Class`, а не исходный текст класса.
+The restored instance has the same data, but it is a **new** object.
 
-- `pickle.dump` / `pickle.dumps` — объект → байты
-- `pickle.load` / `pickle.loads` — байты → объект
+## JSON
 
-Десериализованный объект **равен по данным**, но это уже **другой** экземпляр.
+Text format, easy to read and share across languages. Native types: dict, list, str, number, bool, null. `Student` is mapped to a dict by hand. Images are not JSON values — they go as **base64**.
 
-### JSON
+## WebP and base64
 
-Текстовый формат, понятный людям и другим языкам. Нативно сериализует словари, списки, строки, числа, `true`/`false`/`null`. Класс `Student` мы сами сводим к словарю (`to_jsonable` / `from_jsonable`). Картинки в JSON сами по себе не живут — их кодируют в **base64**.
+wxPython may not open WebP; Pillow decodes the preview.
 
-### marshal
-
-В лекции упоминается как ещё один бинарный формат CPython. Он не переносится между версиями интерпретатора и другими языками, поэтому в лабораторной не используем.
-
-### Картинка WebP и base64
-
-wxPython нативно не всегда открывает WebP, поэтому декодирование идёт через Pillow.
-
-| Канал | Как хранится фото |
+| Channel | Photo storage |
 | --- | --- |
-| pickle | `Photo.data: bytes` — сырой WebP |
+| pickle | `Photo.data: bytes` — raw WebP |
 | JSON | `{filename, mime: "image/webp", encoding: "base64", data: "..."}` |
 | data URL | `data:image/webp;base64,<payload>` |
 
-JSON с base64 раздувает размер примерно на 33%. Зато файл можно открыть в редакторе и отправить в браузер.
+JSON grows ~33%. It can be opened in an editor.
 
-### Сеть
+## Network
 
-В методичке клиент делает `recv(1024)`. Для словаря `{"name": "John"}` этого хватает, для WebP — нет. В коде используется **length-prefix**:
+The handout uses `recv(1024)`. Fine for a tiny dict, not for WebP. This lab uses **length-prefix**:
 
-1. 4 байта длины (big-endian `!I`)
-2. 8 байт имени формата (`pickle` / `json`)
-3. полезная нагрузка ровно `length - 8` байт (точнее: длина считается для всего конверта)
+1. 4 bytes length (big-endian `!I`)
+2. 8 bytes format name (`pickle` / `json`)
+3. payload
 
-Сервер десериализует `Student` и отправляет тот же конверт обратно (эхо). «Другое приложение» — `python -m lab1.reader artifacts/student.pkl`.
+The server deserializes `Student` and echoes the same envelope. The “other application” is `python -m lab1.reader artifacts/student.pkl`.
 
-### Визуальная форма
+## Visual form
 
-Виджеты tkinter/wx нельзя pickle-нуть как живые окна. Сериализуется **снимок состояния**: заголовок, текст метки, подпись кнопки, содержимое текстового поля. По снимку создаётся новое окно (`from_dict`).
+Live wx/tk widgets are not pickled. A **state snapshot** is stored: title, label, button caption, text field. A new window is built from `from_dict`.
 
-## Алгоритм работы
+## Steps
 
-1. Создать `Student(name, group, faculty)` и при желании прикрепить `.webp`.
-2. Сохранить pickle и JSON в `artifacts/`.
-3. Прочитать файл отдельным процессом `lab1.reader`.
-4. Поднять TCP-сервер, отправить объект клиентом, сверить эхо.
-5. Сериализовать GUI-форму и восстановить её в новом кадре.
-6. Повторить шаги для pickle и JSON отдельно.
+1. Build `Student(name, group, faculty)`, optionally attach `.webp`.
+2. Write pickle and JSON under `artifacts/`.
+3. Read them with `lab1.reader`.
+4. Start a TCP server, send the object, check the echo.
+5. Serialize a GUI form and restore it.
+6. Repeat for pickle and JSON.
 
-## Безопасность
+## Safety
 
-`pickle.loads` с недоверенных данных может выполнить код. Для обмена с внешним миром берите JSON и проверяйте схему. В лабораторной оба конца — ваш код на localhost.
+`pickle.loads` of untrusted data can run code. Use JSON at a language boundary. Here both ends are localhost.
 
-## Преимущества и недостатки
+## Trade-offs
 
-**pickle**: полный граф объектов Python, компактнее для байтов картинки. Не читается глазами, опасен, привязан к Python.
+**pickle**: full Python graph, compact for image bytes. Not human-readable, unsafe, Python-only.
 
-**JSON**: межъязыковой, удобно смотреть diff. Нужен ручной адаптер класса, картинка только через base64.
+**JSON**: cross-language, easy diffs. Needs a class adapter; images only via base64.
 
-## Связь с другими работами
+## Links
 
-- **ЛР2** — вместо «послать объект» вызываем **метод** на сервере (XML-RPC сам сериализует аргументы в XML).
-- **ЛР4** — при десериализации pickle как раз нужна рефлексия: интерпретатор ищет класс по имени.
+- **Lab 2** — call a **method** on the server (XML-RPC serializes arguments itself).
+- **Lab 4** — pickle restore looks up the class by name (reflection).

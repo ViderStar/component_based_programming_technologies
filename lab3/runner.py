@@ -17,7 +17,7 @@ def run_lab3() -> dict[str, object]:
     text = extract_pdf_text(pdf) if pdf.exists() else ""
     icons = sorted(path.name for path in ICONS_DIR.glob("*.png"))
     logger.info("CustomButton bases: %s", CustomButton.__mro__)
-    logger.info("Иконки тулбара: %s", ", ".join(icons) or "(ещё не сгенерированы)")
+    logger.info("Toolbar icons: %s", ", ".join(icons) or "(not generated yet)")
     if text:
         logger.info("PDF preview:\n%s", text[:400])
     return {"icons": icons, "pdf_chars": len(text)}

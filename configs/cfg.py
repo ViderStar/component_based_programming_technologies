@@ -6,25 +6,23 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-UNIVERSITY = (
-    "Белорусский государственный университет информатики и радиоэлектроники"
-)
-FACULTY = "Факультет информационных технологий и управления"
-DEPARTMENT = "Кафедра информационных технологий автоматизированных систем"
-COURSE = "Технологии компонентного программирования"
+UNIVERSITY = "Belarusian State University of Informatics and Radioelectronics"
+FACULTY = "Faculty of Computer Systems and Networks"
+SPECIALTY = "POIT"
+GROUP = "PI"
+COURSE = "Component-Based Programming Technologies"
 YEAR = 2026
-CITY = "Минск"
+CITY = "Minsk"
 
-STUDENT_NAME = "Лебедевич Артём Владимирович"
-STUDENT_ROLE = "магистрант 2 курса"
+STUDENT_NAME = "Artsem Lebiadzevich"
 
-TEACHER_NAME = "Герман Олег Витольдович"
-TEACHER_TITLE = "кандидат технических наук, доцент кафедры ИТАС"
+TEACHER_NAME = "Oleg German"
+TEACHER_TITLE = "PhD, Associate Professor, ITAS"
 
 DEFAULT_STUDENT = {
     "name": STUDENT_NAME,
-    "group": "магистрант, 2 курс",
-    "faculty": "ФИТУ / ИТАС",
+    "group": GROUP,
+    "faculty": "FCSN / POIT",
 }
 
 LAB1_HOST = "127.0.0.1"

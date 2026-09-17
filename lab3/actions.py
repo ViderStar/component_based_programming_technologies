@@ -13,8 +13,8 @@ def extract_pdf_text(path: str | Path, max_pages: int = 8) -> str:
     chunks: list[str] = []
     for index, page in enumerate(reader.pages[:max_pages], start=1):
         text = page.extract_text() or ""
-        chunks.append(f"— страница {index} —\n{text.strip()}")
-    return "\n\n".join(chunks) if chunks else "(текст не извлечён)"
+        chunks.append(f"— page {index} —\n{text.strip()}")
+    return "\n\n".join(chunks) if chunks else "(no text extracted)"
 
 
 __all__ = ["extract_pdf_text", "open_excel", "open_path", "open_word", "play_audio", "stop_audio"]

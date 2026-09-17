@@ -14,14 +14,14 @@ logger = logging.getLogger(__name__)
 
 def run_lab4() -> dict[str, object]:
     student = make_student()
-    logger.info("Динамический класс: %s", Student)
+    logger.info("Dynamic class: %s", Student)
     logger.info(format_report(student))
 
     add_method_to_object(student, "introduce", introduce)
-    logger.info("Метод на объекте: %s", student.introduce("БГУИР"))
+    logger.info("Instance method: %s", student.introduce("BSUIR"))
 
     add_method_to_class(Student, "shout", lambda self: self.greet().upper())
-    logger.info("Метод на классе: %s", student.shout())
+    logger.info("Class method: %s", student.shout())
 
     tests = run_annotated_tests()
     for line in tests:

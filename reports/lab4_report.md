@@ -1,55 +1,54 @@
-# Отчёт по лабораторной работе №4
+# Lab 4 report
 
-**Учреждение образования**  
-«Белорусский государственный университет информатики и радиоэлектроники»
+**Institution**  
+Belarusian State University of Informatics and Radioelectronics
 
-Факультет информационных технологий и управления  
-Кафедра информационных технологий автоматизированных систем
+Faculty of Computer Systems and Networks (FCSN), POIT, group PI
 
-**Отчёт по лабораторной работе №4**  
-по дисциплине «Технологии компонентного программирования»
+**Lab 4 report**  
+Course: Component-Based Programming Technologies
 
-**Тема:** рефлексия (динамический класс, inspect, runtime-методы, Java→Python)
+**Topic:** reflection (dynamic class, inspect, runtime methods, Java→Python)
 
 | | |
 | --- | --- |
-| Выполнил | магистрант 2 курса Лебедевич Артём Владимирович |
-| Проверил | к.т.н., доцент Герман Олег Витольдович |
-| Минск | 2026 |
+| Author | Artsem Lebiadzevich, year-2 MSc, FCSN, POIT, PI |
+| Supervisor | Oleg German, PhD, Associate Professor |
+| Minsk | 2026 |
 
 ---
 
-## 1. Цель
+## 1. Goal
 
-Освоить рефлексию на Python: создать класс во время выполнения, показать его поля и сигнатуры, добавить метод в runtime, принять имя метода из Java-программы. Дополнительно — прогнать методы с «аннотациями» ожидаемого результата (старая Java-методичка).
+Use Python reflection: create a class at runtime, list fields and signatures, add a method on the fly, accept a method name from Java. Also run methods with expected-output “annotations” (older Java handout).
 
-## 2. Ход работы
+## 2. Work done
 
-1. `Student = type("Student", ..., {"greet": ...})` — динамический класс.
-2. `inspect.getmembers` / `inspect.signature` работают с ним так же, как со стационарным классом.
-3. `types.MethodType` вешает `introduce(suffix)` на экземпляр.
-4. Мост `lab4/bridge_server.py` принимает JSON `{"method":"greet","args":[]}` и делает `getattr`.
-5. `lab4/java/MethodSender.java` шлёт этот JSON в сокет.
-6. Декоратор `@expected(input, output)` + обход методов — аналог аннотаций из `.doc`.
+1. `Student = type("Student", ..., {"greet": ...})`.
+2. `inspect.getmembers` / `inspect.signature` work on that class.
+3. `types.MethodType` binds `introduce(suffix)` on the instance.
+4. `lab4/bridge_server.py` accepts JSON `{"method":"greet","args":[]}` and uses `getattr`.
+5. `lab4/java/MethodSender.java` sends that JSON.
+6. Decorator `@expected(input, output)` plus a method walk.
 
-Код: [`lab4/`](../lab4/). Теория: [`labs_info/lab4_theory.md`](../labs_info/lab4_theory.md).
+Code: [`lab4/`](../lab4/). Theory: [`labs_info/lab4_theory.md`](../labs_info/lab4_theory.md).
 
-![Окно ЛР4](screenshots/lab4.png)
+![Lab 4 window](screenshots/lab4.png)
 
-## 3. Результаты
+## 3. Results
 
-`python main.py --lab 4` печатает отчёт `inspect`, результат `introduce`, два PASS по аннотированным тестам и ответ моста. Автотесты покрывают сигнатуру `greet()`, оба annotated-метода и TCP-протокол моста.
+`python main.py --lab 4` prints the inspect report, `introduce`, two PASS annotated tests, and the bridge reply. Tests cover `greet()` signature, both annotated methods, and the TCP protocol.
 
-## 4. Выводы
+## 4. Conclusions
 
-Рефлексия нужна отладчикам, сериализаторам и RPC: везде имя члена приходит строкой. Динамический `type()` — не фокус, а тот же путь, которым Python собирает обычные классы. Вызов метода из Java показывает, что язык по ту сторону сокета не важен, важен контракт.
+Debuggers, serializers, and RPC all receive member names as strings. `type()` is how Python builds ordinary classes. Java on the other end of the socket does not matter — the contract does.
 
-## 5. Соответствие заданию
+## 5. Assignment map
 
-| Пункт методички | Где смотреть |
+| Handout item | Where |
 | --- | --- |
 | Dynamic Student + `greet()` | `lab4/dynamic_student.py` |
-| Поля и сигнатуры | GUI-дерево, `inspector.describe` |
-| Новый метод в runtime | кнопка «Добавить introduce()» |
-| Java отправляет метод | `MethodSender.java` + мост |
-| Аннотации / несколько методов | `Probe.get_str`, `Probe.tag` |
+| Fields and signatures | GUI tree, `inspector.describe` |
+| New method at runtime | “runtime method” case |
+| Java sends a method | `MethodSender.java` + bridge |
+| Annotations / several methods | `Probe.get_str`, `Probe.tag` |

@@ -60,5 +60,5 @@ def add_method_to_class(cls: type, name: str, func: Callable[..., Any]) -> None:
     setattr(cls, name, func)
 
 
-def introduce(self, suffix: str = "ИТАС") -> str:
+def introduce(self, suffix: str = "POIT") -> str:
     return f"{self.name} / {self.group} / {suffix}"
