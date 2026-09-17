@@ -1,0 +1,4 @@
+wxPython==4.3.1
+Pillow==12.3.0
+pypdf==6.19.0
+pygame==2.6.1
