@@ -1,17 +1,20 @@
-"""Launcher: four labs, no walls of text."""
+"""Launcher: two labs plus the Lab 1 extras, no walls of text."""
 
 from __future__ import annotations
 
 import wx
 
 from configs.cfg import COURSE, STUDENT_NAME, TEACHER_NAME, YEAR
-from ui.theme import PAGE_BG, apply_window_icon, make_header, styled_button
+from ui.theme import MUTED, PAGE_BG, apply_window_icon, make_header, styled_button
 
 LABS = [
-    ("1", "Serialization", "lab1"),
-    ("2", "XML-RPC", "lab2"),
-    ("3", "wxPython", "lab3"),
-    ("4", "Reflection", "lab4"),
+    ("Lab 1  Serialization", "lab1"),
+    ("Lab 2  COM server", "lab2"),
+]
+EXTRAS = [
+    ("XML-RPC", "rpc"),
+    ("wxPython", "wxui"),
+    ("Reflection", "reflection"),
 ]
 
 
@@ -24,12 +27,22 @@ class LauncherFrame(wx.Frame):
         layout = wx.BoxSizer(wx.VERTICAL)
         layout.Add(make_header(root, COURSE), 0, wx.EXPAND)
 
-        grid = wx.GridSizer(rows=2, cols=2, vgap=10, hgap=10)
-        for number, title, lab_id in LABS:
-            btn = styled_button(root, f"Lab {number}  {title}")
+        grid = wx.GridSizer(rows=1, cols=2, vgap=10, hgap=10)
+        for title, lab_id in LABS:
+            btn = styled_button(root, title)
             btn.Bind(wx.EVT_BUTTON, lambda _e, lab=lab_id: self.open_lab(lab))
             grid.Add(btn, 0, wx.EXPAND)
         layout.Add(grid, 1, wx.ALL | wx.EXPAND, 16)
+
+        caption = wx.StaticText(root, label="Lab 1 extras")
+        caption.SetForegroundColour(MUTED)
+        layout.Add(caption, 0, wx.LEFT | wx.RIGHT, 16)
+        extras = wx.GridSizer(rows=1, cols=3, vgap=10, hgap=10)
+        for title, lab_id in EXTRAS:
+            btn = styled_button(root, title, primary=False)
+            btn.Bind(wx.EVT_BUTTON, lambda _e, lab=lab_id: self.open_lab(lab))
+            extras.Add(btn, 0, wx.EXPAND)
+        layout.Add(extras, 0, wx.ALL | wx.EXPAND, 16)
         root.SetSizer(layout)
 
         menubar = wx.MenuBar()
@@ -57,14 +70,18 @@ class LauncherFrame(wx.Frame):
             from lab2.gui import Lab2Frame
 
             Lab2Frame(self).Show()
-        elif lab_id == "lab3":
-            from lab3.app import Lab3Frame
+        elif lab_id == "rpc":
+            from lab1.extras.rpc.gui import RpcFrame
 
-            Lab3Frame(self).Show()
+            RpcFrame(self).Show()
+        elif lab_id == "wxui":
+            from lab1.extras.wxui.app import WxuiFrame
+
+            WxuiFrame(self).Show()
         else:
-            from lab4.gui import Lab4Frame
+            from lab1.extras.reflection.gui import ReflectionFrame
 
-            Lab4Frame(self).Show()
+            ReflectionFrame(self).Show()
 
 
 def run_launcher() -> None:

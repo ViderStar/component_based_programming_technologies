@@ -105,7 +105,7 @@ def make_pdf() -> None:
 def make_office() -> None:
     (SAMPLES / "sample.rtf").write_text(
         r"{\rtf1\ansi\deff0{\fonttbl{\f0 Helvetica;}}\f0\fs28 "
-        r"BSUIR 2026. Lab 3 sample document for Word/Pages/TextEdit.\par}",
+        r"BSUIR 2026. Sample document for Word/Pages/TextEdit.\par}",
         encoding="ascii",
     )
     (SAMPLES / "sample.csv").write_text(

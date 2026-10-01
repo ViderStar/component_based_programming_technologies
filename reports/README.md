@@ -5,8 +5,20 @@ Title data: BSUIR, FCSN, POIT, PI; MSc year 2 Artsem Lebiadzevich; supervisor Ol
 | Lab | File |
 | --- | --- |
 | Lab 1 serialization | [lab1_report.md](lab1_report.md) |
-| Lab 2 XML-RPC | [lab2_report.md](lab2_report.md) |
-| Lab 3 wxPython | [lab3_report.md](lab3_report.md) |
-| Lab 4 reflection | [lab4_report.md](lab4_report.md) |
+| Lab 2 COM server | [lab2_report.md](lab2_report.md) |
+| Lab 1 extra: XML-RPC | [lab1_extra_rpc_report.md](lab1_extra_rpc_report.md) |
+| Lab 1 extra: wxPython | [lab1_extra_wxui_report.md](lab1_extra_wxui_report.md) |
+| Lab 1 extra: reflection | [lab1_extra_reflection_report.md](lab1_extra_reflection_report.md) |
 
-Screenshots in [`screenshots/`](screenshots/) are UI mocks (ScreenDC is empty in a headless session). Live UI: `python main.py`. Launcher: [`screenshots/launcher.png`](screenshots/launcher.png).
+PDF reports (LaTeX, built with tectonic):
+
+| Lab | PDF | Source |
+| --- | --- | --- |
+| Lab 1 serialization + extras | [lab1/lab1_report.pdf](lab1/lab1_report.pdf) | [lab1/lab1_report.tex](lab1/lab1_report.tex) |
+| Lab 2 COM server, Windows vs Linux vs macOS | [lab2/lab2_report.pdf](lab2/lab2_report.pdf) | [lab2/lab2_report.tex](lab2/lab2_report.tex) |
+
+```bash
+cd reports/lab2 && tectonic lab2_report.tex
+```
+
+Screenshots in [`screenshots/`](screenshots/) are real window captures made by `python scripts/capture_shots.py` (macOS; needs Screen Recording permission). `lab1_extra_wxui.png` is still a drawn mock from `scripts/render_shots.py`.

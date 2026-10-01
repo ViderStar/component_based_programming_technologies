@@ -1,0 +1,28 @@
+"""CLI smoke-test for lab 3 helpers (no window)."""
+
+from __future__ import annotations
+
+import logging
+from pathlib import Path
+
+from configs.cfg import ICONS_DIR, SAMPLES_DIR
+from lab1.extras.wxui.actions import extract_pdf_text
+from lab1.extras.wxui.widgets import CustomButton
+
+logger = logging.getLogger(__name__)
+
+
+def run_wxui() -> dict[str, object]:
+    pdf = SAMPLES_DIR / "sample.pdf"
+    text = extract_pdf_text(pdf) if pdf.exists() else ""
+    icons = sorted(path.name for path in ICONS_DIR.glob("*.png"))
+    logger.info("CustomButton bases: %s", CustomButton.__mro__)
+    logger.info("Toolbar icons: %s", ", ".join(icons) or "(not generated yet)")
+    if text:
+        logger.info("PDF preview:\n%s", text[:400])
+    return {"icons": icons, "pdf_chars": len(text)}
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    run_wxui()

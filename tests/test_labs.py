@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import json
+import os
 import socket
 import unittest
+import urllib.request
 
 from configs.cfg import SAMPLES_DIR
 from lab1.client import send_student
@@ -9,13 +12,17 @@ from lab1.codecs import attach_photo, dumps_json, dumps_pickle, loads_json_stude
 from lab1.models import Student
 from lab1.net import pack_envelope, recv_message, send_message, unpack_envelope
 from lab1.server import StudentServer
-from lab2.rpc_client import call
-from lab2.rpc_server import RpcServer
-from lab4.bridge_server import MethodBridge, send_request
-from lab4.dynamic_student import Student as DynStudent
-from lab4.dynamic_student import make_student
-from lab4.inspector import describe
-from lab4.runtime_methods import run_annotated_tests
+from lab2 import registry
+from lab2.calculator import Calculator
+from lab2.client import ComError, Dispatch
+from lab2.web import WebServer
+from lab1.extras.rpc.rpc_client import call
+from lab1.extras.rpc.rpc_server import RpcServer
+from lab1.extras.reflection.bridge_server import MethodBridge, send_request
+from lab1.extras.reflection.dynamic_student import Student as DynStudent
+from lab1.extras.reflection.dynamic_student import make_student
+from lab1.extras.reflection.inspector import describe
+from lab1.extras.reflection.runtime_methods import run_annotated_tests
 
 
 class Lab1CodecTests(unittest.TestCase):
@@ -66,7 +73,7 @@ class Lab1NetworkTests(unittest.TestCase):
             server.stop()
 
 
-class Lab2RpcTests(unittest.TestCase):
+class ExtraRpcTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.server = RpcServer(port=18000)
@@ -85,7 +92,7 @@ class Lab2RpcTests(unittest.TestCase):
         self.assertIn("add", members)
 
 
-class Lab4ReflectionTests(unittest.TestCase):
+class ExtraReflectionTests(unittest.TestCase):
     def test_dynamic_class_and_signature(self) -> None:
         person = make_student("Ivan", "1")
         self.assertIsInstance(person, DynStudent)
@@ -110,6 +117,54 @@ class Lab4ReflectionTests(unittest.TestCase):
             bridge.stop()
 
 
+class Lab2ComTests(unittest.TestCase):
+    def setUp(self) -> None:
+        registry.register(Calculator)
+
+    def test_dispatch_runs_in_another_process(self) -> None:
+        calc = Dispatch("Lab2.Calculator")
+        try:
+            self.assertNotEqual(calc.pid, os.getpid())
+            self.assertEqual(calc.Add(2, 3), 5)
+            self.assertEqual(calc.Sub(7, 10), -3)
+            self.assertEqual(calc.Mul(6, 7), 42)
+            self.assertEqual(calc.Div(7, 2), 3.5)
+            self.assertEqual(calc.Pow(2, 10), 1024)
+        finally:
+            calc.Release()
+
+    def test_com_errors(self) -> None:
+        calc = Dispatch("Lab2.Calculator")
+        try:
+            with self.assertRaises(ComError) as failed:
+                calc.Div(1, 0)
+            self.assertEqual(failed.exception.name, "DISP_E_EXCEPTION")
+            with self.assertRaises(ComError) as hidden:
+                calc.secret()
+            self.assertEqual(hidden.exception.name, "DISP_E_UNKNOWNNAME")
+            self.assertEqual(calc.Add(1, 1), 2)
+        finally:
+            calc.Release()
+
+    def test_unregistered_progid(self) -> None:
+        self.addCleanup(registry.register, Calculator)
+        registry.unregister(Calculator)
+        with self.assertRaises(ComError) as failed:
+            Dispatch("Lab2.Calculator")
+        self.assertEqual(failed.exception.name, "CO_E_CLASSSTRING")
+
+    def test_html_endpoint(self) -> None:
+        server = WebServer(port=18020)
+        server.start()
+        try:
+            with urllib.request.urlopen(f"{server.url}calc?op=Mul&a=6&b=7", timeout=10) as response:
+                self.assertEqual(json.loads(response.read())["result"], 42)
+            with urllib.request.urlopen(f"{server.url}calc?op=Release&a=1&b=1", timeout=10) as response:
+                self.assertIn("Unknown operation", json.loads(response.read())["error"])
+        finally:
+            server.stop()
+
+
 class LabCasesTests(unittest.TestCase):
     def test_lab1_file_cases(self) -> None:
         from lab1.cases import json_base64, pickle_file
@@ -119,11 +174,18 @@ class LabCasesTests(unittest.TestCase):
         self.assertIn("photo", pickle_file(student))
         self.assertIn("base64", json_base64(student))
 
-    def test_lab4_case_greet(self) -> None:
-        from lab4.cases import annotated, dynamic_greet
+    def test_reflection_case_greet(self) -> None:
+        from lab1.extras.reflection.cases import annotated, dynamic_greet
 
         self.assertIn("Hello, from", dynamic_greet())
         self.assertTrue(annotated().endswith("PASS") or "PASS" in annotated())
+
+    def test_lab2_cases(self) -> None:
+        from lab2 import cases
+
+        self.assertIn("LocalServer32", cases.registry_keys())
+        self.assertIn("2^10=1024", cases.arithmetic())
+        self.assertIn("CO_E_CLASSSTRING", cases.unregister())
 
 
 if __name__ == "__main__":

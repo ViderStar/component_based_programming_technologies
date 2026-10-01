@@ -1,3 +1,1 @@
-from lab2.runner import run_lab2
-
-__all__ = ["run_lab2"]
+"""Lab 2: COM server (calculator) and its clients."""

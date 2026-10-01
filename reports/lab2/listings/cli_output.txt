@@ -1,0 +1,35 @@
+HKCR\Lab2.Calculator = Lab 2 calculator COM server
+HKCR\Lab2.Calculator\CLSID = {7C1B9A52-3E64-4F0A-9D21-5B8E0C6A2F14}
+HKCR\CLSID\{7C1B9A52-3E64-4F0A-9D21-5B8E0C6A2F14} = Lab 2 calculator COM server
+HKCR\CLSID\{7C1B9A52-3E64-4F0A-9D21-5B8E0C6A2F14}\ProgID = Lab2.Calculator
+HKCR\CLSID\{7C1B9A52-3E64-4F0A-9D21-5B8E0C6A2F14}\LocalServer32 = .venv/bin/python -m lab2.localserver '{7C1B9A52-3E64-4F0A-9D21-5B8E0C6A2F14}'
+HKCR\CLSID\{7C1B9A52-3E64-4F0A-9D21-5B8E0C6A2F14}\PythonCOM = lab2.calculator.Calculator
+CoCreateInstance {7C1B9A52-3E64-4F0A-9D21-5B8E0C6A2F14} -> LocalServer32 pid 42174, port 52441
+GetIDsOfNames("Add")
+  -> DISPID 1
+Invoke(1, [2, 3])
+  -> 5
+GetIDsOfNames("Sub")
+  -> DISPID 2
+Invoke(2, [7, 10])
+  -> -3
+GetIDsOfNames("Mul")
+  -> DISPID 3
+Invoke(3, [6, 7])
+  -> 42
+GetIDsOfNames("Div")
+  -> DISPID 4
+Invoke(4, [7, 2])
+  -> 3.5
+GetIDsOfNames("Pow")
+  -> DISPID 5
+Invoke(5, [2, 10])
+  -> 1024
+Release -> server pid 42174 exited
+register -> Lab2.Calculator -> {7C1B9A52-3E64-4F0A-9D21-5B8E0C6A2F14}, 6 keys
+dispatch -> out-of-process server pid 42173
+arithmetic -> 2+3=5  7-10=-3  6*7=42  7/2=3.5  2^10=1024
+com_errors -> 1/0 -> DISP_E_EXCEPTION, secret -> DISP_E_UNKNOWNNAME
+excel_sheet -> com_calculator.csv, 5 rows
+html_client -> GET /calc?op=Pow&a=2&b=10 -> 1024
+unregister -> 6 keys removed, Dispatch -> CO_E_CLASSSTRING; registered again

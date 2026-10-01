@@ -1,0 +1,14 @@
+Student: Artsem Lebiadzevich, PI, FCSN / POIT
+Photo: avatar.webp, image/webp, 6122 bytes
+pickle file: student.pkl (6320 bytes)
+JSON file:   student.json (8360 bytes)
+Other process (reader) pickle: Artsem Lebiadzevich, PI, FCSN / POIT
+JSON roundtrip: Artsem Lebiadzevich, PI, FCSN / POIT, photo=Photo(filename='avatar.webp', mime='image/webp', bytes=6122)
+GUI snapshot: {'title': 'Visual form', 'button_label': 'Click me', 'text_value': 'Artsem Lebiadzevich', 'label_text': 'demo', 'extra': {}}
+Lab1 server listening on 127.0.0.1:8003
+client ('127.0.0.1', 52437)
+Network JSON echo: Artsem Lebiadzevich, PI, FCSN / POIT
+client ('127.0.0.1', 52438)
+Network pickle echo: Artsem Lebiadzevich, PI, FCSN / POIT
+Photo sent over the wire: 6122 bytes (port 8003)
+Lab 1 done

@@ -11,3 +11,5 @@ Original files (unchanged):
 | `LEC_wxComponent.docx` | Lecture: wx components |
 | `Laboratory_4_ReflectionFF.docx` | Lab: Python reflection |
 | `Рефлексия (лабораторная работа).doc` | Older Java variant (annotations, method tests) |
+
+Lab 2 handouts (COM server, plus the Jython and remote-call materials) are in [`1OKT_2026/`](../1OKT_2026/).

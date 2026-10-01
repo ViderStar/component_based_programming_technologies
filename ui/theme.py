@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import wx
+from wx.lib.buttons import GenButton
 
 from configs.cfg import STUDENT_NAME, YEAR
 from helpers.images import load_icon
@@ -14,6 +15,8 @@ ACCENT = wx.Colour(30, 144, 210)
 CARD_BG = wx.Colour(255, 255, 255)
 PAGE_BG = wx.Colour(236, 241, 247)
 MUTED = wx.Colour(90, 104, 122)
+TEXT = wx.Colour(20, 32, 48)
+SECONDARY_BG = wx.Colour(221, 228, 237)
 
 
 def apply_window_icon(window: wx.TopLevelWindow) -> None:
@@ -25,11 +28,12 @@ def apply_window_icon(window: wx.TopLevelWindow) -> None:
         pass
 
 
-def styled_button(parent: wx.Window, label: str, primary: bool = True) -> wx.Button:
-    button = wx.Button(parent, label=label, size=(-1, 32))
-    if primary:
-        button.SetBackgroundColour(BSUIR_BLUE)
-        button.SetForegroundColour(wx.WHITE)
+def styled_button(parent: wx.Window, label: str, primary: bool = True) -> GenButton:
+    """Flat owner-drawn button: native macOS buttons ignore background colours."""
+    button = GenButton(parent, label=label, size=(-1, 32), style=wx.BORDER_NONE)
+    button.SetUseFocusIndicator(False)
+    button.SetBackgroundColour(BSUIR_BLUE if primary else SECONDARY_BG)
+    button.SetForegroundColour(wx.WHITE if primary else TEXT)
     return button
 
 

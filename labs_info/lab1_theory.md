@@ -64,5 +64,5 @@ Live wx/tk widgets are not pickled. A **state snapshot** is stored: title, label
 
 ## Links
 
-- **Lab 2** — call a **method** on the server (XML-RPC serializes arguments itself).
-- **Lab 4** — pickle restore looks up the class by name (reflection).
+- **Extra: XML-RPC** — call a **method** on the server (XML-RPC serializes arguments itself).
+- **Extra: reflection** — pickle restore looks up the class by name (reflection).

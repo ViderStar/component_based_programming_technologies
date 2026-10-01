@@ -72,31 +72,36 @@ def main() -> None:
 
     from ui.launcher import LauncherFrame
     from lab1.gui import Lab1Frame
+    from lab1.extras.reflection.gui import ReflectionFrame
+    from lab1.extras.rpc.gui import RpcFrame
+    from lab1.extras.wxui.app import WxuiFrame
     from lab2.gui import Lab2Frame
-    from lab3.app import Lab3Frame
-    from lab4.gui import Lab4Frame
 
     jobs = [
         (LauncherFrame, "launcher.png", "Component-Based Programming Technologies", [
             "Lab 1  Serialization — pickle, JSON, WebP/base64, TCP",
-            "Lab 2  Remote calls — XML-RPC, Java HTTP POST",
-            "Lab 3  wxPython — toolbar, browser, calendar, PDF, Office",
-            "Lab 4  Reflection — type(), inspect, MethodType, Java→Python",
+            "Lab 2  COM server — calculator, registry, Dispatch, Excel, HTML",
+            "Lab 1 extras — XML-RPC, wxPython, reflection",
         ], None),
         (Lab1Frame, "lab1.png", "Lab 1  Serialize objects and images", [
             "Student: name, group, faculty + photo (WebP)",
             "Formats: pickle (bytes) and JSON (base64)",
             "Network: length-prefix instead of recv(1024)",
         ], "saved student.json  ·  echo photo 18432 bytes"),
-        (Lab2Frame, "lab2.png", "Lab 2  XML-RPC: call a module by name", [
+        (Lab2Frame, "lab2.png", "Lab 2  COM server: calculator", [
+            "Lab2.Calculator: Add, Sub, Mul, Div, Pow",
+            "ProgID -> CLSID -> LocalServer32 -> python -m lab2.localserver",
+            "Clients: wx keypad, Excel sheet, HTML page",
+        ], "GetIDsOfNames(\"Pow\") -> DISPID 5   Invoke(5, [2, 10]) -> 1024"),
+        (RpcFrame, "lab1_extra_rpc.png", "Lab 1 extra  XML-RPC: call a module by name", [
             "Methods: add, mul, greet_student, inspect_module",
             "Clients: Python xmlrpc.client and Java XmlRpcClient",
         ], "add(5, 3) -> 8"),
-        (Lab3Frame, "lab3.png", "Lab 3  Toolbar, browser, calendar, PDF, Office", [
+        (WxuiFrame, "lab1_extra_wxui.png", "Lab 1 extra  Toolbar, browser, calendar, PDF, Office", [
             "Icons with tooltips, CustomButton, WebView Google",
             "Music via pygame/afplay, PDF via pypdf, Word/Excel fallback on macOS",
         ], "toolbar ready"),
-        (Lab4Frame, "lab4.png", "Lab 4  type(), inspect, runtime methods, Java→Python", [
+        (ReflectionFrame, "lab1_extra_reflection.png", "Lab 1 extra  type(), inspect, runtime methods, Java→Python", [
             "Dynamic Student.greet()",
             "Add introduce() via types.MethodType",
             "TCP JSON bridge {method, args}",
