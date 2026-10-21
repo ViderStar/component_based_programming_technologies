@@ -79,3 +79,8 @@ artifacts/*
 
 # Java class files
 *.class
+
+# Lab 3/4 runtimes fetched by scripts/fetch_runtimes.py
+lab3/site/brython.js
+lab3/site/brython_stdlib.js
+tools/

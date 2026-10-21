@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 3: numerical methods in Brython</title>
+<style>
+  :root { --blue: #0055a5; --navy: #0c2444; --ink: #14202f; --muted: #5a687a; --line: #dde4ed; --page: #ecf1f7; --accent: #1e90d2; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--page); }
+  header { background: var(--navy); color: #f5f8fc; padding: 14px 24px; }
+  header h1 { margin: 0; font-size: 18px; }
+  header p { margin: 4px 0 0; font-size: 12px; color: #b0c4de; }
+  nav { display: flex; gap: 6px; padding: 12px 24px 0; flex-wrap: wrap; }
+  nav button { font-size: 14px; padding: 8px 14px; border: 0; border-radius: 6px 6px 0 0; background: #dde4ed; color: var(--ink); cursor: pointer; }
+  nav button.on { background: #fff; color: var(--blue); font-weight: 600; }
+  main { margin: 0 24px 24px; background: #fff; border-radius: 0 8px 8px 8px; padding: 18px 20px 22px; box-shadow: 0 1px 3px rgba(12, 36, 68, .12); }
+  section { display: none; }
+  section.on { display: block; }
+  h2 { margin: 0 0 4px; font-size: 16px; color: var(--blue); }
+  p.hint { margin: 0 0 14px; font-size: 13px; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 3px; }
+  input, textarea, select { width: 100%; font: 14px/1.4 ui-monospace, Menlo, Consolas, monospace; padding: 6px 8px; border: 1px solid #b9c5d4; border-radius: 4px; background: #fff; color: var(--ink); }
+  input[type=checkbox] { width: auto; margin-right: 6px; }
+  textarea { height: 130px; resize: vertical; }
+  .row { display: flex; gap: 10px; }
+  .row > div { flex: 1; }
+  button.run { margin-top: 14px; font-size: 14px; padding: 8px 18px; border: 0; border-radius: 4px; background: var(--blue); color: #fff; cursor: pointer; }
+  button.run:hover { background: #00468a; }
+  .result { margin-top: 14px; font-size: 14px; }
+  .result .big { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .error { color: #b3261e; font-weight: 600; }
+  table { border-collapse: collapse; margin-top: 6px; font-size: 13px; }
+  th, td { padding: 4px 12px 4px 0; text-align: left; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; }
+  canvas { width: 100%; max-width: 640px; height: auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+  footer { margin: 0 24px 24px; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body onload="brython({pythonpath: ['/'], indexedDB: false})">
+<header>
+  <h1>Lab 3. Numerical methods in the browser with Brython</h1>
+  <p>Artsem Lebiadzevich · BSUIR · Component-Based Programming Technologies · the code below is Python, compiled to JavaScript by Brython</p>
+</header>
+
+<nav>
+  <button id="tab_roots" class="on">Polynomial roots</button>
+  <button id="tab_regression">Linear regression</button>
+  <button id="tab_optimum">Unconstrained optimum</button>
+</nav>
+
+<main>
+  <section id="roots" class="on">
+    <h2>Roots of a polynomial</h2>
+    <p class="hint">Coefficients from the highest degree to the constant term. Real and complex roots are found by the Durand–Kerner method.</p>
+    <div class="grid">
+      <div>
+        <label for="roots_coeffs">Coefficients</label>
+        <input id="roots_coeffs" value="1, -6, 11, -6">
+        <label>Examples</label>
+        <select id="roots_example">
+          <option value="1, -6, 11, -6">x³ − 6x² + 11x − 6 (three real roots)</option>
+          <option value="1, 0, 1">x² + 1 (complex pair)</option>
+          <option value="1, 0, 0, 0, -1">x⁴ − 1 (two real, two complex)</option>
+          <option value="1, -10, 35, -50, 24">x⁴ − 10x³ + 35x² − 50x + 24</option>
+          <option value="2, 0, -8, 0, 0">2x⁴ − 8x² (double zero root)</option>
+        </select>
+        <button class="run" id="roots_run">Find roots</button>
+        <div class="result" id="roots_result"></div>
+      </div>
+      <canvas id="roots_plot" width="640" height="420"></canvas>
+    </div>
+  </section>
+
+  <section id="regression">
+    <h2>Forecast with linear regression</h2>
+    <p class="hint">One line per observation: <code>x y</code>, or a single number to treat the lines as the series y(1), y(2), … The least squares line is extended to the next steps.</p>
+    <div class="grid">
+      <div>
+        <label for="reg_data">Observations</label>
+        <textarea id="reg_data">1 102
+2 108
+3 113
+4 121
+5 124
+6 133
+7 137
+8 146
+9 149
+10 158</textarea>
+        <div class="row">
+          <div><label for="reg_steps">Steps ahead</label><input id="reg_steps" value="4"></div>
+          <div><label for="reg_x">Also predict at x</label><input id="reg_x" value="20"></div>
+        </div>
+        <button class="run" id="reg_run">Build forecast</button>
+        <div class="result" id="reg_result"></div>
+      </div>
+      <canvas id="reg_plot" width="640" height="420"></canvas>
+    </div>
+  </section>
+
+  <section id="optimum">
+    <h2>Optimum of a function without restrictions</h2>
+    <p class="hint">Variables are x, y, z (the start point sets how many). <code>^</code> means power; sin, cos, exp, log, sqrt, abs, pi and e are available.</p>
+    <div class="grid">
+      <div>
+        <label for="opt_func">f(x, y)</label>
+        <input id="opt_func" value="(x - 1)^2 + 2*(y + 2)^2 + x*y">
+        <label>Examples</label>
+        <select id="opt_example">
+          <option value="(x - 1)^2 + 2*(y + 2)^2 + x*y|0, 0|nelder-mead|0">quadratic bowl in x, y</option>
+          <option value="(1 - x)^2 + 100*(y - x^2)^2|-1.2, 1|nelder-mead|0">Rosenbrock valley (minimum at 1, 1)</option>
+          <option value="x^4 - 3*x^2 + x|2|gradient|0">x⁴ − 3x² + x, one variable (two local minima)</option>
+          <option value="sin(x)*exp(-0.1*x)|1|nelder-mead|1">maximum of sin(x)·e^(−0.1x)</option>
+        </select>
+        <div class="row">
+          <div><label for="opt_start">Start point</label><input id="opt_start" value="0, 0"></div>
+          <div><label for="opt_method">Method</label>
+            <select id="opt_method">
+              <option value="nelder-mead">Nelder–Mead</option>
+              <option value="gradient">gradient descent</option>
+              <option value="golden">golden section (1 variable)</option>
+            </select></div>
+        </div>
+        <label for="opt_bracket">Bracket a, b (golden section)</label>
+        <input id="opt_bracket" value="-2, 2">
+        <label><input type="checkbox" id="opt_max">find the maximum instead</label>
+        <button class="run" id="opt_run">Find optimum</button>
+        <div class="result" id="opt_result"></div>
+      </div>
+      <canvas id="opt_plot" width="640" height="420"></canvas>
+    </div>
+  </section>
+</main>
+
+<footer id="status">Brython is loading…</footer>
+<pre id="dump" style="display:none"></pre>
+
+<script src="brython.js"></script>
+<script src="brython_stdlib.js"></script>
+<script type="text/python" src="app.py"></script>
+</body>
+</html>

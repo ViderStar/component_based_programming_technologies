@@ -1,0 +1,14 @@
+environment -> Java 17.0.17 + Jython 2.7.3 (jython-standalone-2.7.3.jar)
+hello_world -> sys.stdout.write and print give the same result
+files -> java.io.File and FileWriter created example_file.txt (24 bytes)
+python_class_extends_java -> class MyClass(Object): a Python class is a Java object
+java_collections -> ArrayList is iterated with a Python for loop and has len()
+jar_import -> sys.path.append(myclass.jar); from com import MyClass -> Hello, dear oleg
+java_calls_python -> PythonInterpreter inside Java: exec, import of jy10, set/get of values
+images_and_sound -> BufferedImage rect and oval drawn, JPEG read by ImageIO (480x320), WAV opened by javax.sound
+menu_items -> Draw > Picture 1, Picture 2, Sine wave, Clear: the canvas follows every click
+menu_picture1 -> picture1.jpg drawn at 564x376, mean error 0.6/255
+menu_picture2 -> picture2.png drawn at 564x376, mean error 0.4/255
+menu_sine -> zero crossings at 197, 336, 476 px, crest at 124 px, amplitude 0.84 of the half-height
+menu_window -> window content 640x444 (menu bar, canvas, status line); the open menu changes (35, 19, 178, 104)
+swing_window -> JFrame opened, Greet printed the name, Clear emptied the field

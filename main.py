@@ -10,6 +10,8 @@ from lab1.extras.rpc.runner import run_rpc
 from lab1.extras.wxui.runner import run_wxui
 from lab1.runner import run_lab1
 from lab2.runner import run_lab2
+from lab3.runner import run_lab3
+from lab4.runner import run_lab4
 
 EXTRAS = {"rpc": run_rpc, "wxui": run_wxui, "reflection": run_reflection}
 
@@ -31,6 +33,14 @@ def _frame(lab: str, extra: str | None):
         from lab2.gui import Lab2Frame
 
         return Lab2Frame
+    if lab == "3":
+        from lab3.gui import Lab3Frame
+
+        return Lab3Frame
+    if lab == "4":
+        from lab4.gui import Lab4Frame
+
+        return Lab4Frame
     from lab1.gui import Lab1Frame
 
     return Lab1Frame
@@ -43,7 +53,7 @@ def main() -> None:
     parser.add_argument("--gui", action="store_true", help="Open the wxPython window instead of the CLI run.")
     parser.add_argument(
         "--lab",
-        choices=("1", "2"),
+        choices=("1", "2", "3", "4"),
         help="Lab number for the CLI run.",
     )
     parser.add_argument(
@@ -54,7 +64,7 @@ def main() -> None:
     parser.add_argument(
         "--all",
         action="store_true",
-        help="Run CLI demos for both labs and the Lab 1 extras.",
+        help="Run CLI demos for all labs and the Lab 1 extras.",
     )
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -64,6 +74,8 @@ def main() -> None:
         for run_extra in EXTRAS.values():
             run_extra()
         run_lab2()
+        run_lab3()
+        run_lab4()
         return
 
     if args.lab is None and args.extra is None:
@@ -84,6 +96,10 @@ def main() -> None:
         EXTRAS[args.extra]()
     elif args.lab == "2":
         run_lab2()
+    elif args.lab == "3":
+        run_lab3()
+    elif args.lab == "4":
+        run_lab4()
     else:
         run_lab1()
 

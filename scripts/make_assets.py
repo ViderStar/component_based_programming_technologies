@@ -13,6 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parent.parent
 ICONS = ROOT / "assets" / "icons"
 SAMPLES = ROOT / "assets" / "samples"
+PICTURES = ROOT / "assets" / "lab4"
 
 PALETTE = {
     "app": (12, 36, 68),
@@ -114,6 +115,45 @@ def make_office() -> None:
     )
 
 
+def _blend(a: tuple[int, int, int], b: tuple[int, int, int], t: float) -> tuple[int, int, int]:
+    return tuple(int(x + (y - x) * t) for x, y in zip(a, b))
+
+
+def make_pictures() -> None:
+    """Two different pictures for the Jython menu application: a JPEG sunrise and a PNG mountain range."""
+    PICTURES.mkdir(parents=True, exist_ok=True)
+    width, height = 480, 320
+
+    sunrise = Image.new("RGB", (width, height))
+    draw = ImageDraw.Draw(sunrise)
+    horizon = 200
+    for y in range(horizon):
+        draw.line((0, y, width, y), fill=_blend((12, 36, 68), (255, 170, 90), (y / horizon) ** 1.4))
+    for y in range(horizon, height):
+        draw.line((0, y, width, y), fill=_blend((40, 80, 130), (10, 30, 60), (y - horizon) / (height - horizon)))
+    draw.pieslice((width / 2 - 46, horizon - 46, width / 2 + 46, horizon + 46), 180, 360, fill=(255, 226, 150))
+    for y in range(horizon + 4, height, 9):  # reflection of the sun on the water
+        half = max(4, 46 - (y - horizon) * 0.35)
+        draw.line((width / 2 - half, y, width / 2 + half, y), fill=(255, 205, 130), width=2)
+    draw.text((16, height - 34), "Picture 1 · sunrise (JPEG)", fill=(236, 241, 247), font=_font(18))
+    sunrise.save(PICTURES / "picture1.jpg", "JPEG", quality=90)
+
+    mountains = Image.new("RGB", (width, height), (236, 241, 247))
+    draw = ImageDraw.Draw(mountains)
+    for y in range(height):
+        draw.line((0, y, width, y), fill=_blend((196, 224, 245), (236, 241, 247), y / height))
+    draw.ellipse((360, 40, 420, 100), fill=(255, 240, 200))
+    layers = [
+        ((150, 170, 200), [(0, 230), (90, 120), (170, 210), (260, 90), (360, 220), (480, 150), (480, 320), (0, 320)]),
+        ((0, 85, 165), [(0, 270), (120, 170), (220, 260), (320, 160), (480, 280), (480, 320), (0, 320)]),
+        ((12, 36, 68), [(0, 310), (80, 250), (200, 305), (330, 240), (480, 310), (480, 320), (0, 320)]),
+    ]
+    for colour, polygon in layers:
+        draw.polygon(polygon, fill=colour)
+    draw.text((16, 12), "Picture 2 · mountains (PNG)", fill=(12, 36, 68), font=_font(18))
+    mountains.save(PICTURES / "picture2.png", "PNG")
+
+
 def main() -> None:
     ICONS.mkdir(parents=True, exist_ok=True)
     SAMPLES.mkdir(parents=True, exist_ok=True)
@@ -133,6 +173,7 @@ def main() -> None:
     make_wav()
     make_pdf()
     make_office()
+    make_pictures()
     print("assets ready")
 
 

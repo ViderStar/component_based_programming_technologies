@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 3: examples from the handout</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 24px; color: #14202f; max-width: 760px; }
+  h1 { font-size: 18px; color: #0055a5; }
+  h2 { font-size: 15px; margin: 22px 0 6px; color: #0c2444; }
+  input { font-size: 14px; padding: 5px 8px; }
+  button { font-size: 14px; padding: 5px 12px; border: 0; border-radius: 4px; background: #0055a5; color: #fff; cursor: pointer; }
+  .out { margin-top: 8px; font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: #1b5e20; min-height: 1.2em; }
+  .field { margin: 6px 0; }
+  .field label { display: inline-block; width: 150px; font-size: 13px; }
+</style>
+</head>
+<body onload="brython({pythonpath: ['/'], indexedDB: false})">
+<!-- 1. the first example: a heading made from Python -->
+<h1>Brython: the examples of the handout</h1>
+Hey, there!
+<div id="hello_box"></div>
+
+<script type="text/python">
+import browser
+import browser.html  # since Brython 3.10 the submodule must be imported explicitly
+
+txt = browser.html.H2("Oleg German, are this you?")
+browser.document <= txt
+</script>
+
+<!-- 2. input field, a button with an alert, a second button with a greeting, the square -->
+<h2>Input field, alert and square</h2>
+<script type="text/python">
+from browser import document, alert, bind
+
+def fun(ev):
+    text = document["div1"].value
+    document["out_alert"].text = "alert: " + text
+    alert(text)
+
+def hello(ev):
+    text = "Hello, " + document["div1"].value
+    document["out_alert"].text = "alert: " + text
+    alert(text)
+
+def square(ev):
+    input_value = document["div1"].value.strip()
+    try:
+        inum = float(input_value)
+        text = "The square is: " + str(inum ** 2)
+    except ValueError:
+        text = "The input is not a value"
+    document["out_alert"].text = "alert: " + text
+    alert(text)
+
+document["bn"].bind("click", fun)
+document["button_alert"].bind("click", hello)
+document["calc"].bind("click", square)
+</script>
+<input id="div1" value="7">
+<button id="bn">click !</button>
+<button id="button_alert">display new alert</button>
+<button id="calc">square</button>
+<div class="out" id="out_alert"></div>
+
+<!-- 3. integral of x**2 by the trapezoidal rule -->
+<h2>Integral of x**2 (trapezoidal rule)</h2>
+<script type="text/python">
+from browser import document
+import math
+
+def f(x):
+    return x ** 2
+
+def trapezoidal_rule(f, a, b, n):
+    h = (b - a) / n
+    s = 0.5 * (f(a) + f(b))
+    for i in range(1, n):
+        s += f(a + i * h)
+    return h * s
+
+def calculate(ev):
+    lower_bound = float(document["lower_bound"].value.strip())
+    upper_bound = float(document["upper_bound"].value.strip())
+    num_intervals = 100
+    integral_value = trapezoidal_rule(f, lower_bound, upper_bound, num_intervals)
+    document["output"].text = "The definite integral of x**2 from {} to {} is approximately {}".format(
+        lower_bound, upper_bound, integral_value)
+
+document["integral_bn"].bind("click", calculate)
+</script>
+<div class="field"><label for="lower_bound">Enter the lower bound:</label><input type="text" id="lower_bound" value="0"></div>
+<div class="field"><label for="upper_bound">Enter the upper bound:</label><input type="text" id="upper_bound" value="3"></div>
+<div><button id="integral_bn">Calculate</button></div>
+<div class="out" id="output"></div>
+
+<script src="brython.js"></script>
+<script src="brython_stdlib.js"></script>
+</body>
+</html>

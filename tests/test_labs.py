@@ -5,6 +5,7 @@ import os
 import socket
 import unittest
 import urllib.request
+from pathlib import Path
 
 from configs.cfg import SAMPLES_DIR
 from lab1.client import send_student
@@ -16,6 +17,11 @@ from lab2 import registry
 from lab2.calculator import Calculator
 from lab2.client import ComError, Dispatch
 from lab2.web import WebServer
+from lab3 import cases as lab3_cases
+from lab3 import numerics
+from lab3.server import SiteServer
+from lab4 import cases as lab4_cases
+from lab4 import runtime as jython_runtime
 from lab1.extras.rpc.rpc_client import call
 from lab1.extras.rpc.rpc_server import RpcServer
 from lab1.extras.reflection.bridge_server import MethodBridge, send_request
@@ -163,6 +169,93 @@ class Lab2ComTests(unittest.TestCase):
                 self.assertIn("Unknown operation", json.loads(response.read())["error"])
         finally:
             server.stop()
+
+
+class Lab3NumericsTests(unittest.TestCase):
+    def test_polynomial_roots(self) -> None:
+        roots = numerics.poly_roots([1, -6, 11, -6])
+        self.assertEqual([round(r.real, 9) for r in roots], [1.0, 2.0, 3.0])
+        self.assertTrue(all(r.imag == 0 for r in roots))
+
+    def test_complex_pair_and_text(self) -> None:
+        roots = numerics.poly_roots([1, 0, 1])
+        self.assertEqual([numerics.root_text(r) for r in roots], ["-i", "i"])
+        self.assertEqual(numerics.poly_text([1, -6, 11, -6]), "x^3 - 6x^2 + 11x - 6")
+
+    def test_zero_roots_are_exact(self) -> None:
+        self.assertEqual(sorted(r.real for r in numerics.poly_roots([2, 0, -8, 0, 0])), [-2.0, 0.0, 0.0, 2.0])
+
+    def test_constant_has_no_roots(self) -> None:
+        with self.assertRaises(ValueError):
+            numerics.poly_roots([0, 0, 7])
+
+    def test_regression_matches_statistics(self) -> None:
+        import statistics
+
+        xs, ys = numerics.parse_points(numerics.DEMO_SERIES)
+        model = numerics.linear_regression(xs, ys)
+        reference = statistics.linear_regression(xs, ys)
+        self.assertAlmostEqual(model["slope"], reference.slope)
+        self.assertAlmostEqual(model["intercept"], reference.intercept)
+        self.assertAlmostEqual(numerics.forecast(model, xs, 1)[0][1], reference.slope * 11 + reference.intercept)
+
+    def test_regression_needs_two_distinct_x(self) -> None:
+        with self.assertRaises(ValueError):
+            numerics.linear_regression([1, 1], [2, 3])
+
+    def test_optimum_methods_agree(self) -> None:
+        expression = "(x - 1)^2 + 2*(y + 2)^2 + x*y"
+        expected = (16 / 7, -18 / 7)
+        for method in ("nelder-mead", "gradient"):
+            found = numerics.minimize(expression, [0.0, 0.0], method)["x"]
+            self.assertAlmostEqual(found[0], expected[0], places=4, msg=method)
+            self.assertAlmostEqual(found[1], expected[1], places=4, msg=method)
+
+    def test_maximum_and_forbidden_names(self) -> None:
+        top = numerics.minimize("-(x - 3)^2 + 5", [0.0], maximize=True)
+        self.assertEqual(top["kind"], "maximum")
+        self.assertAlmostEqual(top["fx"], 5.0, places=6)
+        with self.assertRaises(ValueError):
+            numerics.minimize("open('x')", [1.0])
+
+
+class Lab3SiteTests(unittest.TestCase):
+    def test_site_serves_shared_module(self) -> None:
+        server = SiteServer(port=18030)
+        server.start()
+        try:
+            for path in ("site/index.html", "site/app.py", "numerics.py"):
+                with urllib.request.urlopen(f"http://{server.host}:{server.port}/{path}", timeout=10) as response:
+                    self.assertEqual(response.status, 200)
+            with urllib.request.urlopen(f"http://{server.host}:{server.port}/numerics.py", timeout=10) as response:
+                served = response.read().decode("utf-8")
+            self.assertEqual(served, Path(numerics.__file__).read_text(encoding="utf-8"))
+        finally:
+            server.stop()
+
+    @unittest.skipIf(lab3_cases.find_browser() is None, "no Chromium-based browser")
+    def test_brython_page_matches_cpython(self) -> None:
+        try:
+            self.assertIn("equal CPython", lab3_cases.brython_page())
+        finally:
+            lab3_cases.stop_server()
+
+
+@unittest.skipUnless(jython_runtime.available(), "Java or the Jython jar is missing (python scripts/fetch_runtimes.py)")
+class Lab4JythonTests(unittest.TestCase):
+    def test_java_from_python(self) -> None:
+        self.assertIn("Jython 2.7.3", lab4_cases.environment())
+        self.assertIn("Hello, dear oleg", lab4_cases.jar_import())
+
+    def test_python_from_java(self) -> None:
+        self.assertIn("PythonInterpreter", lab4_cases.java_calls_python())
+
+    def test_menu_application(self) -> None:
+        self.assertIn("follows every click", lab4_cases.menu_items())
+        self.assertIn("picture1.jpg", lab4_cases.menu_picture1())
+        self.assertIn("picture2.png", lab4_cases.menu_picture2())
+        self.assertIn("zero crossings", lab4_cases.menu_sine())
+        self.assertIn("menu bar", lab4_cases.menu_window())
 
 
 class LabCasesTests(unittest.TestCase):

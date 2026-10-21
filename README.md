@@ -14,6 +14,8 @@ Student: **Artsem Lebiadzevich**, year-2 MSc, FCSN, POIT, PI, 2026.
 | --- | --- |
 | **Serialization** | pickle, JSON, sockets, WebP as bytes and base64 |
 | **COM** | registration, activation, `IDispatch`, Office and HTML clients |
+| **Python in the browser** | Brython: DOM from Python, numerical methods on a web page |
+| **Python on the JVM** | Jython: Java classes from Python, Swing menu application |
 | **Remote calls** (extra) | XML-RPC vs REST and CGI |
 | **GUI components** (extra) | wxPython: toolbar, WebView, calendar, Office, PDF |
 | **Reflection** (extra) | `type()`, `inspect`, runtime methods, Java→Python |
@@ -22,7 +24,9 @@ Student: **Artsem Lebiadzevich**, year-2 MSc, FCSN, POIT, PI, 2026.
 
 1. Serialize a custom object and an image, restore them in another process and over TCP.
 2. Publish a calculator as a COM server and call it from a GUI, Excel and a web page.
-3. Extras: call a function in another process, build a desktop app from wx widgets, inspect and change a class at runtime.
+3. Write a client site in Python (Brython): polynomial roots, linear-regression forecast, optimum of a function.
+4. Mix Java and Python (Jython): use Java classes from Python, and draw two pictures and a sine wave from a Swing menu.
+5. Extras: call a function in another process, build a desktop app from wx widgets, inspect and change a class at runtime.
 
 ---
 
@@ -41,6 +45,22 @@ Student: **Artsem Lebiadzevich**, year-2 MSc, FCSN, POIT, PI, 2026.
 **Focus**: calculator COM class, registration, out-of-process activation, clients (wx keypad, Excel, HTML).
 
 **Keywords**: ProgID, CLSID, LocalServer32, `IDispatch`, HRESULT.
+
+---
+
+### [Lab 3: Brython](labs_info/lab3_theory.md)
+
+**Focus**: Python scripts in an HTML page, DOM events, a canvas, the same numerical module in the browser and in CPython.
+
+**Keywords**: `brython()`, `browser.document`, `bind`, `pythonpath`.
+
+---
+
+### [Lab 4: Jython](labs_info/lab4_theory.md)
+
+**Focus**: Java ⇄ Python on the JVM, a Python subclass of a Java class, Swing menu, `paintComponent`, `PythonInterpreter`.
+
+**Keywords**: `jython-standalone.jar`, `sys.path.append(jar)`, `JFrame`, `JMenuBar`, `Graphics2D`.
 
 ---
 
@@ -78,6 +98,7 @@ uv venv --python 3.12 .venv
 source .venv/bin/activate
 uv pip install -r requirements.txt
 python scripts/make_assets.py
+python scripts/fetch_runtimes.py   # Brython files for Lab 3, Jython jar for Lab 4 (needs a JDK, e.g. Temurin 17)
 python main.py
 ```
 
@@ -88,6 +109,11 @@ python main.py
 | `python main.py --lab 1 --gui` | Lab 1 window only |
 | `python main.py --lab 2` | CLI COM calculator: register, call, errors |
 | `python main.py --lab 2 --gui` | Lab 2 window only |
+| `python main.py --lab 3` | CLI Brython: numerics, site, the page in a headless browser |
+| `python main.py --lab 3 --gui` | Lab 3 window: the site in a web view |
+| `python main.py --lab 4` | CLI Jython: Java ⇄ Python examples, menu application checks |
+| `python main.py --lab 4 --gui` | Lab 4 window: preview, buttons for the Swing windows |
+| `python -m lab3.server` | serve the Brython site at `http://127.0.0.1:8030/` |
 | `python main.py --extra rpc` | XML-RPC add/mul/inspect (`--gui` for the window) |
 | `python main.py --extra wxui` | wxPython toolbar window |
 | `python main.py --extra reflection` | reflection + bridge (`--gui` for the window) |
@@ -97,7 +123,9 @@ python main.py
 
 Each lab window has a **Cases** list: **Run** or **All** covers the assignment.
 
-Handouts: [`docs/`](docs/), [`1OKT_2026/`](1OKT_2026/). Reports: [`reports/`](reports/) — PDF for [Lab 1](reports/lab1/lab1_report.pdf) and [Lab 2](reports/lab2/lab2_report.pdf).
+Handouts: [`docs/`](docs/), [`1OKT_2026/`](1OKT_2026/), [`Lab_Brython/`](Lab_Brython/), [`Lab_Jython/`](Lab_Jython/). Reports: [`reports/`](reports/) — PDF for [Lab 1](reports/lab1/lab1_report.pdf), [Lab 2](reports/lab2/lab2_report.pdf), [Lab 3](reports/lab3/lab3_report.pdf) and [Lab 4](reports/lab4/lab4_report.pdf).
+
+Lab 4 runs the Jython scripts with `java -jar tools/jython-standalone-2.7.3.jar`; Java is looked up in `JAVA_HOME`, `/Library/Java/JavaVirtualMachines` and `PATH` (override the jar with `JYTHON_JAR`, the browser for Lab 3 with `CHROME`). Without Java or the jar the Lab 4 cases are skipped; without a Chromium-based browser only the page-in-a-browser cases of Lab 3 are.
 
 ## Sending an image (Lab 1)
 

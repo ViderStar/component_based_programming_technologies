@@ -1,4 +1,4 @@
-"""Launcher: two labs plus the Lab 1 extras, no walls of text."""
+"""Launcher: four labs plus the Lab 1 extras, no walls of text."""
 
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ from ui.theme import MUTED, PAGE_BG, apply_window_icon, make_header, styled_butt
 LABS = [
     ("Lab 1  Serialization", "lab1"),
     ("Lab 2  COM server", "lab2"),
+    ("Lab 3  Brython", "lab3"),
+    ("Lab 4  Jython", "lab4"),
 ]
 EXTRAS = [
     ("XML-RPC", "rpc"),
@@ -20,14 +22,14 @@ EXTRAS = [
 
 class LauncherFrame(wx.Frame):
     def __init__(self) -> None:
-        super().__init__(None, title=COURSE, size=(640, 360))
+        super().__init__(None, title=COURSE, size=(640, 420))
         apply_window_icon(self)
         root = wx.Panel(self)
         root.SetBackgroundColour(PAGE_BG)
         layout = wx.BoxSizer(wx.VERTICAL)
         layout.Add(make_header(root, COURSE), 0, wx.EXPAND)
 
-        grid = wx.GridSizer(rows=1, cols=2, vgap=10, hgap=10)
+        grid = wx.GridSizer(rows=2, cols=2, vgap=10, hgap=10)
         for title, lab_id in LABS:
             btn = styled_button(root, title)
             btn.Bind(wx.EVT_BUTTON, lambda _e, lab=lab_id: self.open_lab(lab))
@@ -70,6 +72,14 @@ class LauncherFrame(wx.Frame):
             from lab2.gui import Lab2Frame
 
             Lab2Frame(self).Show()
+        elif lab_id == "lab3":
+            from lab3.gui import Lab3Frame
+
+            Lab3Frame(self).Show()
+        elif lab_id == "lab4":
+            from lab4.gui import Lab4Frame
+
+            Lab4Frame(self).Show()
         elif lab_id == "rpc":
             from lab1.extras.rpc.gui import RpcFrame
 

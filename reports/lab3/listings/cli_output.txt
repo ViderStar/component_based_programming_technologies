@@ -1,0 +1,9 @@
+x^3 - 6x^2 + 11x - 6 -> 1, 2, 3
+x^2 + 1 -> -i, i
+x^4 - 1 -> -1, -i, i, 1
+site_files -> index.html 7 KiB, app.py 14 KiB, brython.js 1430 KiB, numerics.py 18 KiB
+polynomial_roots -> 5 polynomials, max |p(root)| = 8.9e-16; x^2+1 -> ±i
+regression -> y = 6.1394x + 95.333, R² = 0.9951, x=11 -> 162.87
+optimum -> bowl -> (2.2857, -2.5714), Rosenbrock -> (1.0000, 1.0000) in 126 steps, max of sin·exp at x = 1.4711
+handout_examples -> <h2>Oleg German, are this you?</h2> was created by browser.html.H2 and is in the DOM
+brython_page -> Brython 3.15.0 in headless browser: 26 values equal CPython's

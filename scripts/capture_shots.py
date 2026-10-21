@@ -38,22 +38,22 @@ def shoot(frame: wx.Frame, name: str) -> None:
     print(f"capture {name} ({target.stat().st_size} bytes)")
 
 
-def main() -> None:
-    SHOTS.mkdir(parents=True, exist_ok=True)
-    app = wx.App(False)
-
-    import lab2.gui as lab2_gui
-    from lab1.extras.reflection.gui import ReflectionFrame
-    from lab1.extras.rpc.gui import RpcFrame
-    from lab1.gui import Lab1Frame
-    from lab2 import cases as lab2_cases
-    from lab2.web import WebServer
+def shoot_launcher() -> None:
     from ui.launcher import LauncherFrame
 
     launcher = LauncherFrame()
     launcher.Show()
     shoot(launcher, "launcher.png")
     launcher.Destroy()
+
+
+def shoot_labs_1_2() -> None:
+    import lab2.gui as lab2_gui
+    from lab1.extras.reflection.gui import ReflectionFrame
+    from lab1.extras.rpc.gui import RpcFrame
+    from lab1.gui import Lab1Frame
+    from lab2 import cases as lab2_cases
+    from lab2.web import WebServer
 
     lab1 = Lab1Frame()
     lab1.Show()
@@ -93,6 +93,68 @@ def main() -> None:
         shoot(frame, name)
         frame.Close()
     settle(200)
+
+
+
+
+def shoot_lab3() -> None:
+    """The Brython window: one shot per tab of the site, all cases passed."""
+    from lab3 import cases
+    from lab3.gui import Lab3Frame
+
+    frame = Lab3Frame()
+    frame.Show()
+    settle(2500)  # Brython compiles the page in the web view
+    for index in range(len(frame.cases._cases)):
+        frame.cases.run_index(index)
+    shoot(frame, "lab3.png")
+    for name, page, query in (
+        ("lab3_regression.png", "index.html", "?tab=regression"),
+        ("lab3_optimum.png", "index.html", "?tab=optimum"),
+        ("lab3_examples.png", "examples.html", ""),
+    ):
+        frame.open_page(page, query)
+        settle(2500)
+        shoot(frame, name)
+    frame.Close()
+    cases.stop_server()
+
+
+def shoot_lab4() -> None:
+    """The Jython window, plus the Swing content rendered by the lab itself (no screen needed)."""
+    from lab4 import runtime
+    from lab4.gui import Lab4Frame
+
+    frame = Lab4Frame()
+    frame.Show()
+    for index in range(len(frame.cases._cases)):
+        frame.cases.run_index(index)
+    frame.preview("sine")
+    shoot(frame, "lab4.png")
+    frame.Close()
+    for name, view, popup in (
+        ("lab4_picture1.png", "picture1", None),
+        ("lab4_picture2.png", "picture2", None),
+        ("lab4_sine.png", "sine", None),
+        ("lab4_menu.png", "sine", "Draw"),
+    ):
+        args = ["--snapshot", str(SHOTS / name), "--view", view, "--frame"] + (["--popup", popup] if popup else [])
+        runtime.run_jython("menu_app.py", *args)
+        print(f"render {name}")
+
+
+def main() -> None:
+    SHOTS.mkdir(parents=True, exist_ok=True)
+    app = wx.App(False)
+    wanted = set(sys.argv[1:]) or {"launcher", "lab1", "lab2"}
+    if "launcher" in wanted:
+        shoot_launcher()
+    if wanted & {"lab1", "lab2"}:
+        shoot_labs_1_2()
+    if "lab3" in wanted:
+        shoot_lab3()
+    if "lab4" in wanted:
+        shoot_lab4()
 
 
 if __name__ == "__main__":
