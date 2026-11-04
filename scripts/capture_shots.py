@@ -143,6 +143,31 @@ def shoot_lab4() -> None:
         print(f"render {name}")
 
 
+def shoot_lab5() -> None:
+    """The JSP window on Tomcat: all cases passed, then one shot per task page."""
+    from lab5 import cases
+    from lab5.gui import Lab5Frame
+
+    frame = Lab5Frame()
+    frame.Show()
+    for index in range(len(frame.cases._cases)):
+        frame.cases.run_index(index)
+    frame.open_page("index.jsp")
+    settle(1500)
+    shoot(frame, "lab5.png")
+    for name, page, query in (
+        ("lab5_currency.png", "rate.jsp", "?name=%D0%B5%D0%B2%D1%80%D0%BE"),
+        ("lab5_image.png", "image.html", ""),
+        ("lab5_translator.png", "translate.jsp", "?word=%D1%83%D0%BD%D0%B8%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%82%D0%B5%D1%82"),
+        ("lab5_site.png", "site.jsp", "?page=labs"),
+    ):
+        frame.open_page(page, query)
+        settle(1500)
+        shoot(frame, name)
+    frame.Close()
+    cases.stop_server()
+
+
 def main() -> None:
     SHOTS.mkdir(parents=True, exist_ok=True)
     app = wx.App(False)
@@ -155,6 +180,8 @@ def main() -> None:
         shoot_lab3()
     if "lab4" in wanted:
         shoot_lab4()
+    if "lab5" in wanted:
+        shoot_lab5()
 
 
 if __name__ == "__main__":

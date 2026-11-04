@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Отображение изображения</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <a href="index.jsp">Home</a>
+  <a href="hello.jsp">Prototype</a>
+  <a href="currency.jsp">Currency</a>
+  <a href="image.html">Image</a>
+  <a href="translate.jsp">Translator</a>
+  <a href="site.jsp">Site</a>
+</nav>
+<main>
+<h1>Изображение из JSP</h1>
+<img id="picture" class="generated" src="ImageServlet.jsp" alt="Сгенерированное изображение">
+<form onsubmit="document.getElementById('picture').src = 'ImageServlet.jsp?text=' + encodeURIComponent(this.text.value) + '&t=' + Date.now(); return false;">
+  Text on the picture:
+  <input type="text" name="text" value="Hello, JSP!">
+  <input type="submit" value="Draw">
+</form>
+<p class="muted">The browser asks <code>ImageServlet.jsp</code> for the picture; the page answers with
+<code>Content-Type: image/png</code> and the bytes written by <code>ImageIO.write</code>.</p>
+</main>
+</body>
+</html>

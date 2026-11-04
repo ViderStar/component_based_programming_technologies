@@ -1,0 +1,8 @@
+environment -> Tomcat 9.0.122 on Java 17.0.17 at http://127.0.0.1:8040/lab5/ (apache-tomcat-9.0.122)
+war_build -> lab5.war: 8 JSP pages, 3 beans in WEB-INF/classes (14 KiB)
+today_page -> <%! String getDate() %> + <%= getDate() %> -> TODAY IS: 04.11.2026 15:08:47
+hello_prototype -> form -> response.jsp?name=Oleg -> Hello, Oleg!; the session bean keeps the name
+currency_rates -> USD 2.9779, EUR 3.3323 BYN (NBRB, 2026-11-04); 6 spellings, session bean, unknown 'yen' refused
+image_png -> image/png 400x240, 6090 bytes: blue background, yellow sun, 574 white text pixels
+translator -> 6 words in both directions, case and spaces ignored; lexicon of 38 words
+site_writer -> 4 pages written by PrintWriter ot = response.getWriter(), 5 labs in the table

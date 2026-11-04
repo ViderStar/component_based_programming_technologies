@@ -22,6 +22,8 @@ from lab3 import numerics
 from lab3.server import SiteServer
 from lab4 import cases as lab4_cases
 from lab4 import runtime as jython_runtime
+from lab5 import cases as lab5_cases
+from lab5 import runtime as tomcat_runtime
 from lab1.extras.rpc.rpc_client import call
 from lab1.extras.rpc.rpc_server import RpcServer
 from lab1.extras.reflection.bridge_server import MethodBridge, send_request
@@ -256,6 +258,27 @@ class Lab4JythonTests(unittest.TestCase):
         self.assertIn("picture2.png", lab4_cases.menu_picture2())
         self.assertIn("zero crossings", lab4_cases.menu_sine())
         self.assertIn("menu bar", lab4_cases.menu_window())
+
+
+@unittest.skipUnless(tomcat_runtime.available(), "Java or Tomcat is missing (python scripts/fetch_runtimes.py)")
+class Lab5JspTests(unittest.TestCase):
+    @classmethod
+    def tearDownClass(cls) -> None:
+        lab5_cases.stop_server()
+
+    def test_war_and_server(self) -> None:
+        self.assertIn("3 beans", lab5_cases.war_build())
+        self.assertIn("Tomcat", lab5_cases.environment())
+        self.assertIn("TODAY IS", lab5_cases.today_page())
+
+    def test_beans(self) -> None:
+        self.assertIn("Hello, Oleg!", lab5_cases.hello_prototype())
+        self.assertIn("USD", lab5_cases.currency_rates())
+        self.assertIn("both directions", lab5_cases.translator())
+
+    def test_image_and_site(self) -> None:
+        self.assertIn("image/png", lab5_cases.image_png())
+        self.assertIn("response.getWriter()", lab5_cases.site_writer())
 
 
 class LabCasesTests(unittest.TestCase):

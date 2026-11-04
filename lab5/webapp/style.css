@@ -1,0 +1,18 @@
+body { margin: 0; font-family: -apple-system, "Segoe UI", Arial, sans-serif; background: #aabbee; color: #1d2433; }
+nav { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 16px; background: #1f3a68; }
+nav a { color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; }
+nav a:hover { background: #2f5596; }
+main { max-width: 760px; margin: 20px auto; padding: 20px 24px; background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, .12); }
+h1 { margin-top: 0; }
+hr { border: 0; border-top: 1px solid #c7cfe0; }
+form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+input[type=text] { padding: 7px 10px; font-size: 15px; border: 1px solid #9aa7c2; border-radius: 6px; min-width: 220px; }
+input[type=submit], button { padding: 7px 16px; font-size: 15px; border: 0; border-radius: 6px; background: #1f3a68; color: #fff; cursor: pointer; }
+table { border-collapse: collapse; margin: 10px 0; }
+th, td { border: 1px solid #c7cfe0; padding: 5px 10px; text-align: left; }
+th { background: #eef2fa; }
+.answer { font-size: 22px; font-weight: 600; margin: 14px 0; }
+.error { color: #b3261e; font-weight: 600; }
+.muted { color: #5b6478; font-size: 14px; }
+.chips a { display: inline-block; margin: 2px 4px 2px 0; padding: 2px 10px; border-radius: 12px; background: #eef2fa; color: #1f3a68; text-decoration: none; }
+img.generated { border: 1px solid #c7cfe0; border-radius: 6px; max-width: 100%; }

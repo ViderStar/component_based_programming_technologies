@@ -1,0 +1,19 @@
+<%-- Common head and navigation, included into every page with the include directive. --%>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 5 JSP</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <a href="index.jsp">Home</a>
+  <a href="hello.jsp">Prototype</a>
+  <a href="currency.jsp">Currency</a>
+  <a href="image.html">Image</a>
+  <a href="translate.jsp">Translator</a>
+  <a href="site.jsp">Site</a>
+</nav>
+<main>

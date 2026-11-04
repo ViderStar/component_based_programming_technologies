@@ -12,6 +12,7 @@ from lab1.runner import run_lab1
 from lab2.runner import run_lab2
 from lab3.runner import run_lab3
 from lab4.runner import run_lab4
+from lab5.runner import run_lab5
 
 EXTRAS = {"rpc": run_rpc, "wxui": run_wxui, "reflection": run_reflection}
 
@@ -41,6 +42,10 @@ def _frame(lab: str, extra: str | None):
         from lab4.gui import Lab4Frame
 
         return Lab4Frame
+    if lab == "5":
+        from lab5.gui import Lab5Frame
+
+        return Lab5Frame
     from lab1.gui import Lab1Frame
 
     return Lab1Frame
@@ -53,7 +58,7 @@ def main() -> None:
     parser.add_argument("--gui", action="store_true", help="Open the wxPython window instead of the CLI run.")
     parser.add_argument(
         "--lab",
-        choices=("1", "2", "3", "4"),
+        choices=("1", "2", "3", "4", "5"),
         help="Lab number for the CLI run.",
     )
     parser.add_argument(
@@ -76,6 +81,7 @@ def main() -> None:
         run_lab2()
         run_lab3()
         run_lab4()
+        run_lab5()
         return
 
     if args.lab is None and args.extra is None:
@@ -100,6 +106,8 @@ def main() -> None:
         run_lab3()
     elif args.lab == "4":
         run_lab4()
+    elif args.lab == "5":
+        run_lab5()
     else:
         run_lab1()
 

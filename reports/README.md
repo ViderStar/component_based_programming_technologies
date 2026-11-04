@@ -8,6 +8,7 @@ Title data: BSUIR, FCSN, POIT, PI; MSc year 2 Artsem Lebiadzevich; supervisor Ol
 | Lab 2 COM server | [lab2_report.md](lab2_report.md) |
 | Lab 3 Brython | [lab3_report.md](lab3_report.md) |
 | Lab 4 Jython | [lab4_report.md](lab4_report.md) |
+| Lab 5 JSP | [lab5_report.md](lab5_report.md) |
 | Lab 1 extra: XML-RPC | [lab1_extra_rpc_report.md](lab1_extra_rpc_report.md) |
 | Lab 1 extra: wxPython | [lab1_extra_wxui_report.md](lab1_extra_wxui_report.md) |
 | Lab 1 extra: reflection | [lab1_extra_reflection_report.md](lab1_extra_reflection_report.md) |
@@ -20,9 +21,10 @@ PDF reports (LaTeX, built with tectonic):
 | Lab 2 COM server, Windows vs Linux vs macOS | [lab2/lab2_report.pdf](lab2/lab2_report.pdf) | [lab2/lab2_report.tex](lab2/lab2_report.tex) |
 | Lab 3 Brython | [lab3/lab3_report.pdf](lab3/lab3_report.pdf) | [lab3/lab3_report.tex](lab3/lab3_report.tex) |
 | Lab 4 Jython | [lab4/lab4_report.pdf](lab4/lab4_report.pdf) | [lab4/lab4_report.tex](lab4/lab4_report.tex) |
+| Lab 5 JSP | [lab5/lab5_report.pdf](lab5/lab5_report.pdf) | [lab5/lab5_report.tex](lab5/lab5_report.tex) |
 
 ```bash
 cd reports/lab2 && tectonic lab2_report.tex
 ```
 
-Screenshots in [`screenshots/`](screenshots/) are real window captures made by `python scripts/capture_shots.py [launcher lab1 lab2 lab3 lab4]` (macOS; needs Screen Recording permission). `lab1_extra_wxui.png` is still a drawn mock from `scripts/render_shots.py`.
+Screenshots in [`screenshots/`](screenshots/) are real window captures made by `python scripts/capture_shots.py [launcher lab1 lab2 lab3 lab4 lab5]` (macOS; needs Screen Recording permission). `lab1_extra_wxui.png` is still a drawn mock from `scripts/render_shots.py`.
