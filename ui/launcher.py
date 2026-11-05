@@ -1,4 +1,4 @@
-"""Launcher: five labs plus the Lab 1 extras, no walls of text."""
+"""Launcher: six labs plus the Lab 1 extras, no walls of text."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ LABS = [
     ("Lab 3  Brython", "lab3"),
     ("Lab 4  Jython", "lab4"),
     ("Lab 5  JSP", "lab5"),
+    ("Lab 6  Voice server", "lab6"),
 ]
 EXTRAS = [
     ("XML-RPC", "rpc"),
@@ -85,6 +86,10 @@ class LauncherFrame(wx.Frame):
             from lab5.gui import Lab5Frame
 
             Lab5Frame(self).Show()
+        elif lab_id == "lab6":
+            from lab6.gui import Lab6Frame
+
+            Lab6Frame(self).Show()
         elif lab_id == "rpc":
             from lab1.extras.rpc.gui import RpcFrame
 

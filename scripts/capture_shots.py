@@ -168,6 +168,31 @@ def shoot_lab5() -> None:
     cases.stop_server()
 
 
+def shoot_lab6() -> None:
+    """The voice window: all cases, a recording asked by voice with the picture answer; then the web page."""
+    from lab6 import cases, voice
+    from lab6.client import new_recording_path
+    from lab6.gui import Lab6Frame
+
+    frame = Lab6Frame()
+    frame.Show()
+    for index in range(len(frame.cases._cases)):
+        frame.cases.run_index(index)
+    wav = voice.text_to_wav("show me a picture", new_recording_path(), voice="Daniel")  # a voice in place of the microphone
+    frame.voice.refresh_recordings(select=wav)
+    frame.voice._show(cases.client().converse(wav))
+    voice.stop_playback()
+    settle(1500)
+    shoot(frame, "lab6.png")
+    frame.notebook.SetSelection(1)
+    if frame.browser is not None:
+        frame.browser.RunScript("document.getElementById('text').value = 'play some music'; document.getElementById('ask').requestSubmit();")
+    settle(6000)
+    shoot(frame, "lab6_web.png")
+    frame.Close()
+    cases.stop_server()
+
+
 def main() -> None:
     SHOTS.mkdir(parents=True, exist_ok=True)
     app = wx.App(False)
@@ -182,6 +207,8 @@ def main() -> None:
         shoot_lab4()
     if "lab5" in wanted:
         shoot_lab5()
+    if "lab6" in wanted:
+        shoot_lab6()
 
 
 if __name__ == "__main__":

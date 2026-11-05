@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 6 voice server</title>
+<style>
+  body { font: 15px/1.45 -apple-system, "Segoe UI", Arial, sans-serif; margin: 0; background: #f4f6fa; color: #1d2433; }
+  header { background: #1f3a68; color: #fff; padding: 14px 20px; font-size: 19px; font-weight: 600; }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 16px; padding: 16px 20px; max-width: 1100px; }
+  section { background: #fff; border-radius: 8px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, .08); margin-bottom: 16px; }
+  h2 { font-size: 15px; margin: 0 0 10px; }
+  input[type=text] { width: calc(100% - 110px); padding: 7px 9px; border: 1px solid #c5ccd8; border-radius: 6px; font: inherit; }
+  button { padding: 7px 14px; border: 0; border-radius: 6px; background: #2f6fde; color: #fff; font: inherit; cursor: pointer; }
+  button.ghost { background: #e7ecf5; color: #1d2433; }
+  button:disabled { opacity: .5; cursor: default; }
+  audio { width: 100%; margin-top: 6px; }
+  .muted { color: #6b7385; font-size: 13px; }
+  .answer { font-size: 17px; margin: 8px 0 4px; }
+  .tag { display: inline-block; background: #e7ecf5; border-radius: 4px; padding: 1px 7px; font-size: 13px; }
+  #recordings div { border-top: 1px solid #edf0f5; padding: 8px 0; }
+  img { max-width: 100%; border-radius: 6px; }
+  @media (max-width: 760px) { main { grid-template-columns: 1fr; padding: 12px; } }
+</style>
+</head>
+<body>
+<header>Lab 6 · streaming voice server</header>
+<main>
+  <div>
+    <section>
+      <h2>Ask the server</h2>
+      <form id="ask"><input id="text" type="text" value="what time is it" autocomplete="off"> <button>Ask</button></form>
+      <p class="muted">Try: hello · what time is it · what is the date today · tell me a joke · play some music · show me a picture</p>
+      <div id="reply"></div>
+    </section>
+    <section>
+      <h2>Record a WAV</h2>
+      <button id="rec">● Record</button> <button id="stop" class="ghost" disabled>■ Stop</button>
+      <span id="rec-state" class="muted"></span>
+      <div id="recordings"></div>
+    </section>
+  </div>
+  <div>
+    <section>
+      <h2>Image stream</h2>
+      <img src="/stream-image" alt="clock stream">
+      <p class="muted">multipart/x-mixed-replace, a frame per second</p>
+    </section>
+    <section>
+      <h2>Image</h2>
+      <img src="/image" alt="picture">
+    </section>
+  </div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+
+$("ask").onsubmit = async (event) => {
+  event.preventDefault();
+  $("reply").innerHTML = '<p class="muted">Thinking… (the first question trains the classifier)</p>';
+  const response = await fetch("/ask", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({text: $("text").value})});
+  showReply(await response.json());
+};
+
+function showReply(data) {
+  if (data.error) { $("reply").innerHTML = `<p>${esc(data.error)}</p>`; return; }
+  $("reply").innerHTML =
+    `<p class="answer">${esc(data.answer)}</p>` +
+    `<span class="tag">intent: ${esc(data.intent)}</span> <span class="muted">margin ${data.margin}</span>` +
+    `<audio controls autoplay src="${data.audio}"></audio>` +
+    (data.image ? `<img src="${data.image}" alt="answer picture">` : "") +
+    `<p class="muted">Query spoken by the server: <a href="${data.query_audio}">WAV</a></p>`;
+}
+
+// Recording: microphone → Float32 chunks → 16-bit PCM WAV → POST /upload
+let context, source, processor, chunks = [];
+
+$("rec").onclick = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    context = new AudioContext();
+    source = context.createMediaStreamSource(stream);
+    processor = context.createScriptProcessor(4096, 1, 1);
+    chunks = [];
+    processor.onaudioprocess = (e) => chunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+    source.connect(processor);
+    processor.connect(context.destination);
+    $("rec").disabled = true; $("stop").disabled = false; $("rec-state").textContent = "recording…";
+  } catch (err) {
+    $("rec-state").textContent = "no microphone: " + err.message;
+  }
+};
+
+$("stop").onclick = async () => {
+  processor.disconnect(); source.disconnect();
+  source.mediaStream.getTracks().forEach((t) => t.stop());
+  const wav = encodeWav(chunks, context.sampleRate);
+  await context.close();
+  $("rec").disabled = false; $("stop").disabled = true; $("rec-state").textContent = "uploading…";
+  const name = "browser_" + new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + ".wav";
+  const response = await fetch("/upload?name=" + name, {method: "POST", headers: {"Content-Type": "audio/wav"}, body: wav});
+  const saved = await response.json();
+  $("rec-state").textContent = saved.info || saved.error;
+  loadRecordings();
+};
+
+function encodeWav(parts, rate) {
+  const length = parts.reduce((n, p) => n + p.length, 0);
+  const view = new DataView(new ArrayBuffer(44 + 2 * length));
+  const text = (offset, s) => [...s].forEach((c, i) => view.setUint8(offset + i, c.charCodeAt(0)));
+  text(0, "RIFF"); view.setUint32(4, 36 + 2 * length, true); text(8, "WAVE");
+  text(12, "fmt "); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+  view.setUint32(24, rate, true); view.setUint32(28, 2 * rate, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+  text(36, "data"); view.setUint32(40, 2 * length, true);
+  let offset = 44;
+  for (const part of parts) for (const x of part) { view.setInt16(offset, Math.max(-1, Math.min(1, x)) * 32767, true); offset += 2; }
+  return view.buffer;
+}
+
+async function loadRecordings() {
+  const items = await (await fetch("/recordings")).json();
+  $("recordings").innerHTML = items.length ? items.map((r) =>
+    `<div><span class="muted">${esc(r.info)}</span><audio controls preload="none" src="${r.url}"></audio></div>`).join("")
+    : '<p class="muted">No recordings yet.</p>';
+}
+loadRecordings();
+</script>
+</body>
+</html>

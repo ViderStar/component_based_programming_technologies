@@ -24,6 +24,9 @@ from lab4 import cases as lab4_cases
 from lab4 import runtime as jython_runtime
 from lab5 import cases as lab5_cases
 from lab5 import runtime as tomcat_runtime
+from lab6 import cases as lab6_cases
+from lab6 import server as lab6_server
+from lab6 import voice as lab6_voice
 from lab1.extras.rpc.rpc_client import call
 from lab1.extras.rpc.rpc_server import RpcServer
 from lab1.extras.reflection.bridge_server import MethodBridge, send_request
@@ -279,6 +282,44 @@ class Lab5JspTests(unittest.TestCase):
     def test_image_and_site(self) -> None:
         self.assertIn("image/png", lab5_cases.image_png())
         self.assertIn("response.getWriter()", lab5_cases.site_writer())
+
+
+class Lab6WavTests(unittest.TestCase):
+    def test_wav_round_trip(self) -> None:
+        import tempfile
+
+        import numpy as np
+
+        samples = (np.sin(np.linspace(0, 200, 8000)) * 10000).astype(np.int16)
+        with tempfile.TemporaryDirectory() as folder:
+            path = lab6_voice.write_wav(Path(folder) / "x.wav", samples)
+            rate, back = lab6_voice.read_wav(path)
+        self.assertEqual(rate, 16000)
+        self.assertTrue(np.array_equal(back, samples))
+
+    def test_answers(self) -> None:
+        from datetime import datetime
+
+        now = datetime(2026, 11, 5, 9, 7)
+        self.assertEqual(lab6_server.answer("time", now)["answer"], "It is 09:07.")
+        self.assertIn("November 5, 2026", lab6_server.answer("date", now)["answer"])
+        self.assertIn("image", lab6_server.answer("picture", now))
+
+
+@unittest.skipUnless(lab6_voice.tts_available(), "no text-to-speech engine (`say` or pyttsx3)")
+class Lab6VoiceServerTests(unittest.TestCase):
+    @classmethod
+    def tearDownClass(cls) -> None:
+        lab6_cases.stop_server()
+
+    def test_streaming(self) -> None:
+        self.assertIn("3 JPEG frames", lab6_cases.image_endpoints())
+        self.assertIn("same bytes back", lab6_cases.wav_upload_and_stream())
+
+    def test_classifier_and_dialog(self) -> None:
+        self.assertIn("unseen phrasing", lab6_cases.classifier_accuracy())
+        self.assertIn("intents by their first phrasing", lab6_cases.ask_by_text())
+        self.assertIn("music", lab6_cases.voice_dialog())
 
 
 class LabCasesTests(unittest.TestCase):

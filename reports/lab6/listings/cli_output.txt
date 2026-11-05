@@ -1,0 +1,9 @@
+tts_dataset -> 288 WAVs = 6 intents x 6 phrasings x 8 voices, 0.4-2.1 s
+mfcc_features -> 0_Samantha.wav: MFCC 17 frames x 13, feature vector of 78
+classifier_accuracy -> 288 WAVs, 6 intents, 8 voices; accuracy: train 100%, unseen voice 60%, unseen phrasing 53%
+image_endpoints -> /image: PNG 480x270; /stream-image: 3 JPEG frames in multipart/x-mixed-replace
+wav_upload_and_stream -> tone_440.wav: 16000 Hz, mono, 1.0 s, 31 KiB; same bytes back; Range 0-43 -> 206 with the RIFF header; listed in /recordings
+ask_by_text -> 6/6 intents by their first phrasing; time -> "It is 14:12." + answer WAV
+speech_recognition -> speech.wav -> "tell me a joke"
+voice_dialog -> recognized "play some music" -> music -> answer_music_8cf0bc8b.wav: 16000 Hz, mono, 3.8 s, 117 KiB
+audio_devices -> microphone: MacBook Pro Microphone; speakers: MacBook Pro Speakers

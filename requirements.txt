@@ -3,3 +3,8 @@ Pillow==12.3.0
 pypdf==6.19.0
 pygame==2.6.1
 brython==3.15.0
+numpy==2.5.4
+scikit-learn==1.9.1
+librosa==1.0.0
+sounddevice==0.5.6
+SpeechRecognition==3.17.0
